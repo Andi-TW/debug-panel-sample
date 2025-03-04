@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debug_panel_sample",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "debug_panel_sample (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "debug_panel_sample (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "debug_panel_sample Web",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "type": "dart",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-renderer",
+                "html",
+                "--web-browser-flag=--disable-web-security"
+            ]
+        },
+    ]
+}

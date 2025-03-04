@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:flutter/material.dart';
 
@@ -13,128 +11,245 @@ class DebugPanelView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RulesetsTemp? rulesets =
-        response.debug?.adminRules?.dictionaries?.rulesets?.values.firstOrNull;
-    final RuleSet? rulesSet = response.debug?.adminRules?.rulesets?.firstOrNull;
+    final Map<String, RulesetsTemp>? rulesets =
+        response.debug?.adminRules?.dictionaries?.rulesets;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DebugPanelSection(
-              titleBackgroundColor: const Color(0xFFE1E7EA),
-              title: 'Rules Overview',
-              child: Column(
-                children: rulesets?.rules?.entries
-                        .map(
-                          (rule) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: OverviewWidget(
-                              rules: rule.value,
-                            ),
-                          ),
-                        )
-                        .toList() ??
-                    [],
-              ),
-            ),
-            DebugPanelSection(
-              titleBackgroundColor: const Color(0xFFE1E7EA),
-              title: 'Input snapshot',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _propertyLabel(
-                    tag: 'flowType',
-                    tagStyle: _blueLabelTextStyle,
-                    value: 'booking',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                  _propertyLabel(
-                    tag: 'portalFacts',
-                    tagStyle: _blueLabelTextStyle,
-                    value: '{ "officeId": "KULMH08FX" }',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                  _propertyLabel(
-                    tag: 'language',
-                    tagStyle: _blueLabelTextStyle,
-                    value: 'en-GB',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                ],
-              ),
-            ),
-            DebugPanelSection(
-              titleBackgroundColor: const Color(0xFFE1E7EA),
-              title: 'Output Actions',
-              child: Column(
-                children: [
-                  _verticalPropertyLabel(
-                    tag:
-                        'Update placeholder in TravelerComponent @refx/booking',
-                    tagStyle: _blackLabelTextStyle,
-                    value:
-                        'ph-refx-traveler-management-cont-top → rules/contents/traveller/travellers-name-guide-text/master.json',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                ],
-              ),
-            ),
-            DebugPanelSection(
-              titleBackgroundColor: const Color(0xFFE1E7EA),
-              title: 'Output Actions',
-              child: Column(
-                children: [
-                  _propertyWithCaptionLabel(
-                    caption:
-                        'Update Config TravelerManagementContConfig @refx/booking',
-                    captionStyle: _blackLabelTextStyle,
-                    tag: 'programs',
-                    tagStyle: _blueLabelTextStyle,
-                    value:
-                        '[ "MH", "AS", "AA", "BA", "CX", "EK", "EY", "AY", "IB", "JL", "KL", "SQ", "QF" ]',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                  _propertyWithCaptionLabel(
-                    caption:
-                        'Update Config TravelerManagementContConfig @refx/booking-components',
-                    captionStyle: _blackLabelTextStyle,
-                    tag: 'programs',
-                    tagStyle: _blueLabelTextStyle,
-                    value:
-                        '[\n"MH",\n"AS",\n"AA",\n"BA",\n"CX",\n"EK",\n"EY",\n"AY",\n"IB",\n"JL",\n"KL",\n"SQ",\n"QF",\n"QR",\n"AT",\n"RJ",\n"S7",\n"UL"\n]',
-                    valueStyle: _greenLabelTextStyle,
-                  ),
-                ],
-              ),
-            ),
-            DebugPanelSection(
-              titleBackgroundColor: const Color(0xFFE1E7EA),
-              title: 'Output Actions',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: rulesets?.rules?.entries.map(
-                      (rules) {
-                        Rule? newRules = rulesSet?.executedRules?.firstWhere(
-                          (e) => e.ruleId == rules.key,
-                        );
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: ExecutedRulesView(
-                            title: rules.value.name ?? '',
-                            rule: newRules,
-                          ),
-                        );
-                      },
-                    ).toList() ??
-                    [],
-              ),
-            ),
-          ],
+          children: rulesets?.entries.map(
+                (e) {
+                  return RuleSetView(
+                    initialExpanded: true,
+                    rulesetId: e.key,
+                    ruleSet: e.value,
+                    operatorText: (operatorCode) =>
+                        response.debug?.adminRules?.dictionaries
+                            ?.operators?[operatorCode ?? ''] ??
+                        '',
+                    ruleSetDetails: (rulesetId) =>
+                        response.debug?.adminRules?.rulesets?.firstWhere(
+                      (element) => element.rulesetId == rulesetId,
+                    ),
+                  );
+                },
+              ).toList() ??
+              [],
         ),
+      ),
+    );
+  }
+}
+
+class RuleSetView extends StatefulWidget {
+  final bool initialExpanded;
+  final String rulesetId;
+  final RulesetsTemp ruleSet;
+  final String Function(String? operatorCode) operatorText;
+  final RuleSet? Function(String? rulesetId) ruleSetDetails;
+
+  const RuleSetView({
+    super.key,
+    required this.initialExpanded,
+    required this.rulesetId,
+    required this.ruleSet,
+    required this.operatorText,
+    required this.ruleSetDetails,
+  });
+
+  @override
+  State<RuleSetView> createState() => _RuleSetViewState();
+}
+
+class _RuleSetViewState extends State<RuleSetView> {
+  bool isExpanded = false;
+
+  @override
+  void initState() {
+    isExpanded = widget.initialExpanded;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(
+            color: const Color(0xFFE1E7EA),
+            width: 1.0,
+          )),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+        vertical: 16.0,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: () {
+              setState(() => isExpanded = !isExpanded);
+            },
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.ruleSet.name ?? '',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.0,
+                        color: Color(0xFF333333)),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      border: Border.all(
+                        color: const Color(0xFF1DB36E),
+                        width: 1.0,
+                      )),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 10,
+                  ),
+                  child: const Text(
+                    'APPLIED',
+                    style: TextStyle(
+                      color: Color(0xFF1DB36E),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isExpanded)
+            Column(
+              children: [
+                DebugPanelSection(
+                  titleBackgroundColor: const Color(0xFFE1E7EA),
+                  title: 'Rules Overview',
+                  child: Column(
+                    children: widget.ruleSet.rules?.entries
+                            .map(
+                              (rule) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: OverviewWidget(
+                                  rules: rule.value,
+                                  operatorText: widget.operatorText,
+                                ),
+                              ),
+                            )
+                            .toList() ??
+                        [],
+                  ),
+                ),
+                DebugPanelSection(
+                  titleBackgroundColor: const Color(0xFFE1E7EA),
+                  title: 'Input snapshot',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _propertyLabel(
+                        tag: 'flowType',
+                        tagStyle: _blueLabelTextStyle,
+                        value: 'booking',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                      _propertyLabel(
+                        tag: 'portalFacts',
+                        tagStyle: _blueLabelTextStyle,
+                        value: '{ "officeId": "KULMH08FX" }',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                      _propertyLabel(
+                        tag: 'language',
+                        tagStyle: _blueLabelTextStyle,
+                        value: 'en-GB',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                DebugPanelSection(
+                  titleBackgroundColor: const Color(0xFFE1E7EA),
+                  title: 'Output Actions',
+                  child: Column(
+                    children: [
+                      _verticalPropertyLabel(
+                        tag:
+                            'Update placeholder in TravelerComponent @refx/booking',
+                        tagStyle: _blackLabelTextStyle,
+                        value:
+                            'ph-refx-traveler-management-cont-top → rules/contents/traveller/travellers-name-guide-text/master.json',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                DebugPanelSection(
+                  titleBackgroundColor: const Color(0xFFE1E7EA),
+                  title: 'Output Actions',
+                  child: Column(
+                    children: [
+                      _propertyWithCaptionLabel(
+                        caption:
+                            'Update Config TravelerManagementContConfig @refx/booking',
+                        captionStyle: _blackLabelTextStyle,
+                        tag: 'programs',
+                        tagStyle: _blueLabelTextStyle,
+                        value:
+                            '[ "MH", "AS", "AA", "BA", "CX", "EK", "EY", "AY", "IB", "JL", "KL", "SQ", "QF" ]',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                      _propertyWithCaptionLabel(
+                        caption:
+                            'Update Config TravelerManagementContConfig @refx/booking-components',
+                        captionStyle: _blackLabelTextStyle,
+                        tag: 'programs',
+                        tagStyle: _blueLabelTextStyle,
+                        value:
+                            '[\n"MH",\n"AS",\n"AA",\n"BA",\n"CX",\n"EK",\n"EY",\n"AY",\n"IB",\n"JL",\n"KL",\n"SQ",\n"QF",\n"QR",\n"AT",\n"RJ",\n"S7",\n"UL"\n]',
+                        valueStyle: _greenLabelTextStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                DebugPanelSection(
+                  titleBackgroundColor: const Color(0xFFE1E7EA),
+                  title: 'Output Actions',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widget.ruleSet.rules?.entries.map(
+                          (rules) {
+                            Rule? newRules = widget.ruleSetDetails
+                                .call(widget.rulesetId)
+                                ?.executedRules
+                                ?.firstWhere(
+                                  (e) => e.ruleId == rules.key,
+                                );
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: ExecutedRulesView(
+                                title: rules.value.name ?? '',
+                                rule: newRules,
+                              ),
+                            );
+                          },
+                        ).toList() ??
+                        [],
+                  ),
+                ),
+              ],
+            )
+        ],
       ),
     );
   }
@@ -257,18 +372,24 @@ class DebugPanelView extends StatelessWidget {
                   caption,
                   style: captionStyle,
                 ),
-                RichText(
-                  text: TextSpan(text: tag, style: tagStyle, children: [
-                    TextSpan(
-                      text: ' = ',
+                Row(
+                  children: [
+                    Text(
+                      tag,
+                      style: tagStyle,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      '=',
                       style: captionStyle,
                     ),
-                    TextSpan(
-                      text: value,
+                    const SizedBox(width: 4.0),
+                    Text(
+                      value,
                       style: valueStyle,
-                    ),
-                  ]),
-                ),
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -383,8 +504,8 @@ class PillContentView extends StatelessWidget {
                 color: Colors.white,
               ),
               padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
+                horizontal: 10.0,
+                vertical: 9.0,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,7 +520,7 @@ class PillContentView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 4.0,
+                    height: 8.0,
                   ),
                   content,
                 ],
@@ -429,10 +550,12 @@ class PillContentView extends StatelessWidget {
 
 class OverviewWidget extends StatelessWidget {
   final RulesTemp rules;
+  final String Function(String? operatorCode) operatorText;
 
   const OverviewWidget({
     super.key,
     required this.rules,
+    required this.operatorText,
   });
 
   @override
@@ -468,6 +591,7 @@ class OverviewWidget extends StatelessWidget {
         conditions: overview.conditions ?? [],
         success: overview.success,
         failed: overview.failed,
+        operatorText: operatorText,
       );
     } else if (overview.type == 'action') {
       return Column(
@@ -491,25 +615,28 @@ class OverviewWidget extends StatelessWidget {
 
   Widget _generateActionView(RulesAction action) {
     Widget propertyLabel(String tag, String value) {
-      return RichText(
-        text: TextSpan(
-          text: '$tag: ',
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 10,
-            color: Color(0xFFA7B6BF),
-          ),
-          children: [
-            TextSpan(
-              text: value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 10,
-                color: Color(0xFF333333),
-              ),
+      return Row(
+        children: [
+          Text(
+            '$tag:',
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              color: Color(0xFFA7B6BF),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            width: 4.0,
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: 10,
+              color: Color(0xFF333333),
+            ),
+          ),
+        ],
       );
     }
 
@@ -524,13 +651,18 @@ class OverviewWidget extends StatelessWidget {
         );
         component.properties?.forEach(
           (property) {
-            children.add(propertyLabel(
-              'Property',
-              property.property ?? '',
-            ));
-            children.add(propertyLabel(
-              'Value',
-              property.value ?? '',
+            children.add(Row(
+              children: [
+                propertyLabel(
+                  'Property',
+                  property.property ?? '',
+                ),
+                const SizedBox(width: 8.0),
+                propertyLabel(
+                  'Value',
+                  property.value ?? '',
+                ),
+              ],
             ));
           },
         );
@@ -539,52 +671,55 @@ class OverviewWidget extends StatelessWidget {
 
     action.placeholders?.forEach(
       (placeholder) {
-        children.add(
-          propertyLabel(
-            'Position',
-            placeholder.position ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'Contents',
-            placeholder.contents ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Position',
+              placeholder.position ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'Contents',
+              placeholder.contents ?? '',
+            ),
+          ],
+        ));
       },
     );
 
     action.replacements?.forEach(
       (replacement) {
-        children.add(
-          propertyLabel(
-            'Replace',
-            replacement.replace ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'With',
-            replacement.replaceWith ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Replace',
+              replacement.replace ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'With',
+              replacement.replaceWith ?? '',
+            ),
+          ],
+        ));
       },
     );
 
     action.variables?.forEach(
       (variable) {
-        children.add(
-          propertyLabel(
-            'Variable',
-            variable.variable ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'Value',
-            variable.value ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Variable',
+              variable.variable ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'Value',
+              variable.value ?? '',
+            ),
+          ],
+        ));
       },
     );
 
@@ -599,12 +734,14 @@ class ConditionView extends StatelessWidget {
   final List<Condition> conditions;
   final List<RuleElement>? success;
   final List<RuleElement>? failed;
+  final String Function(String? operatorCode) operatorText;
 
   const ConditionView({
     super.key,
     required this.conditions,
     this.success,
     this.failed,
+    required this.operatorText,
   });
 
   @override
@@ -617,33 +754,39 @@ class ConditionView extends StatelessWidget {
             title: 'CONDITION',
             color: const Color(0xFFE6A935),
             content: Column(
-              children: _generateConditionViews(conditions),
+              children: _generateConditionViews(
+                conditions: conditions,
+                depth: 0,
+                baseColor: Colors.white,
+              ),
             ),
           ),
-          success != null
+          success != null || failed != null
               ? ConditionResultView(
                   title: 'IF YES',
                   bgColor: const Color(0xFFEAF8F8),
                   textColor: const Color(0xFF00AFAD),
+                  initialExpanded: true,
                   children: success
                           ?.map(
                             (e) => _generateElementViews(e),
                           )
                           .toList() ??
-                      [],
+                      [const EmptyActionView()],
                 )
               : const SizedBox(),
-          failed != null
+          success != null || failed != null
               ? ConditionResultView(
                   title: 'IF NO',
                   bgColor: const Color(0xFFFCEDF0),
                   textColor: const Color(0xFFD1223E),
+                  initialExpanded: false,
                   children: failed
                           ?.map(
                             (e) => _generateElementViews(e),
                           )
                           .toList() ??
-                      [],
+                      [const EmptyActionView()],
                 )
               : const SizedBox(),
         ],
@@ -657,6 +800,7 @@ class ConditionView extends StatelessWidget {
         conditions: element.conditions ?? [],
         success: element.success,
         failed: element.failed,
+        operatorText: operatorText,
       );
     } else if (element.type == 'action') {
       return Column(
@@ -707,14 +851,21 @@ class ConditionView extends StatelessWidget {
         );
         component.properties?.forEach(
           (property) {
-            children.add(propertyLabel(
-              'Property',
-              property.property ?? '',
-            ));
-            children.add(propertyLabel(
-              'Value',
-              property.value ?? '',
-            ));
+            children.add(
+              Row(
+                children: [
+                  propertyLabel(
+                    'Property',
+                    property.property ?? '',
+                  ),
+                  const SizedBox(width: 8.0),
+                  propertyLabel(
+                    'Value',
+                    property.value ?? '',
+                  ),
+                ],
+              ),
+            );
           },
         );
       },
@@ -722,52 +873,55 @@ class ConditionView extends StatelessWidget {
 
     action.placeholders?.forEach(
       (placeholder) {
-        children.add(
-          propertyLabel(
-            'Position',
-            placeholder.position ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'Contents',
-            placeholder.contents ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Position',
+              placeholder.position ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'Contents',
+              placeholder.contents ?? '',
+            ),
+          ],
+        ));
       },
     );
 
     action.replacements?.forEach(
       (replacement) {
-        children.add(
-          propertyLabel(
-            'Replace',
-            replacement.replace ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'With',
-            replacement.replaceWith ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Replace',
+              replacement.replace ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'With',
+              replacement.replaceWith ?? '',
+            ),
+          ],
+        ));
       },
     );
 
     action.variables?.forEach(
       (variable) {
-        children.add(
-          propertyLabel(
-            'Variable',
-            variable.variable ?? '',
-          ),
-        );
-        children.add(
-          propertyLabel(
-            'Value',
-            variable.value ?? '',
-          ),
-        );
+        children.add(Row(
+          children: [
+            propertyLabel(
+              'Variable',
+              variable.variable ?? '',
+            ),
+            const SizedBox(width: 8.0),
+            propertyLabel(
+              'Value',
+              variable.value ?? '',
+            ),
+          ],
+        ));
       },
     );
 
@@ -777,18 +931,37 @@ class ConditionView extends StatelessWidget {
     );
   }
 
-  List<Widget> _generateConditionViews(List<Condition> conditions) {
+  List<Widget> _generateConditionViews(
+      {required List<Condition> conditions,
+      required int depth,
+      required Color? baseColor}) {
     List<Widget> widgets = [];
     for (int i = 0; i < conditions.length; i++) {
       var condition = conditions[i];
       if (condition.conditionType == 'single') {
-        widgets.add(_generateSingleConditionView(condition));
-        widgets.add(const Divider());
+        widgets.add(
+          _generateSingleConditionView(
+            condition: condition,
+          ),
+        );
+        if (i < (conditions.length - 1) && conditions[i + 1].conditionType == 'single') {
+          widgets.add(
+             const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Divider(),
+            ),
+          );
+        }
       } else if (condition.conditionType == 'group') {
         widgets.add(
           _generateGroupConditionView(
-            condition.conditionOperator ?? '',
-            _generateConditionViews(condition.conditions ?? []),
+            conditionOperator: condition.conditionOperator ?? '',
+            conditions: _generateConditionViews(
+              conditions: condition.conditions ?? [],
+              depth: depth + 1,
+              baseColor: baseColor,
+            ),
+            bgColor: depth % 2 == 1 ? baseColor : const Color(0xFFF0F3F5),
           ),
         );
       }
@@ -796,27 +969,49 @@ class ConditionView extends StatelessWidget {
     return widgets;
   }
 
-  Widget _generateGroupConditionView(
-    String conditionOperator,
-    List<Widget> conditions,
-  ) {
-    return ConditionCompareView(
-      comparisonText: conditionOperator,
-      child: Column(
-        children: conditions,
+  Widget _generateGroupConditionView({
+    required String conditionOperator,
+    required List<Widget> conditions,
+    required Color? bgColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+        right: 8.0,
+      ),
+      child: ConditionCompareView(
+        comparisonText: conditionOperator,
+        child: Container(
+          color: bgColor,
+          child: Column(
+            children: [
+              const SizedBox(height: 4.0,),
+              ...conditions,
+              const SizedBox(height: 4.0,),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _generateSingleConditionView(Condition condition) {
-    return ConditionCompareView(
-      comparisonText: condition.conditionOperator ?? '',
-      child: Column(
-        children: [
-          ConditionCompareDetailsView(
-            operand: condition.operand,
-          ),
-        ],
+  Widget _generateSingleConditionView({
+    required Condition condition,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: ConditionCompareView(
+        comparisonText: condition.conditionOperator ?? '',
+        child: Column(
+          children: [
+            const SizedBox(height: 4.0,),
+            ConditionCompareDetailsView(
+              operand: condition.operand,
+              operatorText: operatorText,
+            ),
+            const SizedBox(height: 4.0,),
+          ],
+        ),
       ),
     );
   }
@@ -839,7 +1034,11 @@ class ConditionCompareView extends StatelessWidget {
         children: [
           comparisonText != null
               ? Padding(
-                  padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(
+                    right: 8.0,
+                    bottom: 4.0,
+                    left: 8.0,
+                  ),
                   child: SizedBox(
                     width: 30,
                     child: Text(
@@ -849,6 +1048,7 @@ class ConditionCompareView extends StatelessWidget {
                         fontSize: 12.0,
                         color: Color(0xFFE6A935),
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 )
@@ -860,12 +1060,12 @@ class ConditionCompareView extends StatelessWidget {
 
 class ConditionCompareDetailsView extends StatelessWidget {
   final Operand? operand;
-  final String Function(String? operatorCode)? operator;
+  final String Function(String? operatorCode) operatorText;
 
   const ConditionCompareDetailsView({
     super.key,
     required this.operand,
-    this.operator,
+    required this.operatorText,
   });
 
   @override
@@ -895,7 +1095,7 @@ class ConditionCompareDetailsView extends StatelessWidget {
         Flexible(
           flex: 1,
           child: Text(
-            operator?.call(operand?.operator) ?? operand?.operator ?? '',
+            operatorText.call(operand?.operator),
             style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 10,
@@ -988,11 +1188,12 @@ class ActionView extends StatelessWidget {
   }
 }
 
-class ConditionResultView extends StatelessWidget {
+class ConditionResultView extends StatefulWidget {
   final String title;
   final Color? bgColor;
   final Color? textColor;
   final List<Widget> children;
+  final bool initialExpanded;
 
   const ConditionResultView({
     super.key,
@@ -1000,13 +1201,27 @@ class ConditionResultView extends StatelessWidget {
     this.bgColor,
     this.textColor,
     required this.children,
+    required this.initialExpanded,
   });
+
+  @override
+  State<ConditionResultView> createState() => _ConditionResultViewState();
+}
+
+class _ConditionResultViewState extends State<ConditionResultView> {
+  bool isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isExpanded = widget.initialExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
     final BorderSide borderSide = BorderSide(
       width: 1.0,
-      color: textColor ?? Colors.grey,
+      color: widget.textColor ?? Colors.grey,
     );
 
     return Container(
@@ -1015,27 +1230,54 @@ class ConditionResultView extends StatelessWidget {
         horizontal: 8.0,
       ),
       decoration: BoxDecoration(
-          color: bgColor,
+          color: widget.bgColor,
           border: Border(
             left: borderSide,
             right: borderSide,
             bottom: borderSide,
           )),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 10.0,
-              color: textColor,
+          InkWell(
+            child: Row(
+              children: [
+                Container(
+                  width: 10.0,
+                  height: 10.0,
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: widget.textColor,
+                    borderRadius: BorderRadius.circular(2.0), // Corner radius
+                  ),
+                  child: Center(
+                    child: Text(
+                      isExpanded ? '-' : '+',
+                      style: const TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 8.0, // Text size
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 4.0,
+                ),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10.0,
+                    color: widget.textColor,
+                  ),
+                ),
+              ],
             ),
+            onTap: () {
+              setState(() => isExpanded = !isExpanded);
+            },
           ),
-          const SizedBox(
-            height: 8.0,
-          ),
-          ...children
+          if (isExpanded) ...widget.children
         ],
       ),
     );
@@ -1070,12 +1312,15 @@ class ExecutedRulesView extends StatelessWidget {
           title: 'Executed Rules',
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: rule?.variables?.map((variable) {
-              return _propertyLabel(
-                tag: variable.property ?? '', 
-                value: variable.value?.current ?? '',
-              );
-            },).toList() ?? [],
+            children: rule?.variables?.map(
+                  (variable) {
+                    return _propertyLabel(
+                      tag: variable.property ?? '',
+                      value: variable.value?.current ?? '',
+                    );
+                  },
+                ).toList() ??
+                [],
           ),
         ),
         DebugPanelSection(
@@ -1146,21 +1391,27 @@ class ExecutedRulesView extends StatelessWidget {
     required String tag,
     required String value,
   }) {
-    return RichText(
-      text: TextSpan(
-        text: '• $tag',
-        style: _blueLabelTextStyle,
-        children: [
-          TextSpan(
-            text: ' = ',
-            style: _blackLabelTextStyle,
-          ),
-          TextSpan(
-            text: value,
-            style: _greenLabelTextStyle,
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        Text(
+          '• $tag',
+          style: _blueLabelTextStyle,
+        ),
+        const SizedBox(
+          width: 4.0,
+        ),
+        Text(
+          '=',
+          style: _blackLabelTextStyle,
+        ),
+        const SizedBox(
+          width: 4.0,
+        ),
+        Text(
+          value,
+          style: _greenLabelTextStyle,
+        ),
+      ],
     );
   }
 
@@ -1168,21 +1419,27 @@ class ExecutedRulesView extends StatelessWidget {
     required String from,
     required String to,
   }) {
-    return RichText(
-      text: TextSpan(
-        text: '• $from: ',
-        style: _greenLabelTextStyle,
-        children: [
-          TextSpan(
-            text: ' -> ',
-            style: _blackLabelTextStyle,
-          ),
-          TextSpan(
-            text: to,
-            style: _greenLabelTextStyle,
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        Text(
+          '• $from',
+          style: _greenLabelTextStyle,
+        ),
+        const SizedBox(
+          width: 4.0,
+        ),
+        Text(
+          '→',
+          style: _blackLabelTextStyle,
+        ),
+        const SizedBox(
+          width: 4.0,
+        ),
+        Text(
+          to,
+          style: _greenLabelTextStyle,
+        ),
+      ],
     );
   }
 
@@ -1197,30 +1454,23 @@ class ExecutedRulesView extends StatelessWidget {
           '•',
           style: _blueLabelTextStyle,
         ),
-        const SizedBox(
-          width: 4.0,
+        const SizedBox(width: 4.0),
+        Text(
+          '$tag:',
+          style: _blueLabelTextStyle,
         ),
-        Flexible(
-          child: RichText(
-            text: TextSpan(
-              text: '$tag: ',
-              style: _blueLabelTextStyle,
-              children: [
-                TextSpan(
-                  text: 'undefined',
-                  style: _greenLabelTextStyle,
-                ),
-                TextSpan(
-                  text: ' -> ',
-                  style: _blackLabelTextStyle,
-                ),
-                TextSpan(
-                  text: value,
-                  style: _greenLabelTextStyle,
-                ),
-              ],
-            ),
-          ),
+        const SizedBox(width: 4.0),
+        Text(
+          'undefined',
+          style: _greenLabelTextStyle,
+        ),
+        Text(
+          '→',
+          style: _blackLabelTextStyle,
+        ),
+        Text(
+          value,
+          style: _greenLabelTextStyle,
         ),
       ],
     );
@@ -1287,5 +1537,35 @@ class ExecutedRulesView extends StatelessWidget {
       },
     );
     return widgets;
+  }
+}
+
+class EmptyActionView extends StatelessWidget {
+  const EmptyActionView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicWidth(
+      child: Container(
+        alignment: Alignment.centerLeft,
+        height: 33.0,
+        decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color(0xFFCED8DD),
+              width: 1.0,
+            ),
+            color: const Color(0xFFFAFBFC)),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        child: const Text(
+          'NO ACTION',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 12.0,
+            color: Color(0xFFCED8DD),
+          ),
+        ),
+      ),
+    );
   }
 }

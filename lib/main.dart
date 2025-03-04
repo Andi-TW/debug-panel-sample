@@ -196,6 +196,41 @@ const dataJson = '''
                                 "value": "true" 
                               }
                             }
+                          },
+                          {
+                            "conditionOperator": "AND", 
+                            "conditionType": "group",
+                            "conditions": [ 
+                              {
+                                "conditionType": "single",
+                                "operand": {
+                                  "lhs": {
+                                    "tag": "App",
+                                    "value": "Aircraft Type"
+                                  },
+                                  "operator": "eq",
+                                  "rhs": {
+                                    "tag": "Lit",
+                                    "value": "A321, A320, A333" 
+                                  }
+                                }
+                              },
+                              {
+                                "conditionOperator": "OR",
+                                "conditionType": "single",
+                                "operand": {
+                                  "lhs": {
+                                    "tag": "App",
+                                    "value": "First Origin Check"
+                                  },
+                                  "operator": "eq",
+                                  "rhs": {
+                                    "tag": "Lit",
+                                    "value": "true" 
+                                  }
+                                }
+                              }
+                            ]
                           }
                         ]
                       },

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:debug_panel_sample/debug_panel_view.dart';
+import 'package:debug_panel_sample/scrollable_debug_panel_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,7 +21,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const DebugPanelPage(),
+      // home: const DebugPanelPage(),
+      home: MainPage(
+        response: Response.fromJson(jsonDecode(dataJson)),
+      ),
     );
   }
 }

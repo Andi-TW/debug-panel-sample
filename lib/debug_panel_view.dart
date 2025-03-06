@@ -129,20 +129,48 @@ class _RuleSetViewState extends State<RuleSetView> {
             ),
           ),
           if (isExpanded)
-            Column(
+            RulesSetContentView(
+              ruleSet: widget.ruleSet, 
+              rulesetId: widget.rulesetId, 
+              operatorText: widget.operatorText, 
+              ruleSetDetails: widget.ruleSetDetails,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class RulesSetContentView extends StatelessWidget {
+  final RulesetsTemp ruleSet;
+  final String rulesetId;
+  final String Function(String? operatorCode) operatorText;
+  final RuleSet? Function(String? rulesetId) ruleSetDetails;
+
+  const RulesSetContentView({
+    super.key,
+    required this.ruleSet,
+    required this.rulesetId,
+    required this.operatorText,
+    required this.ruleSetDetails,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
               children: [
                 DebugPanelSection(
                   titleBackgroundColor: const Color(0xFFE1E7EA),
                   title: 'Rules Overview',
                   child: Column(
-                    children: widget.ruleSet.rules?.entries
+                    children: ruleSet.rules?.entries
                             .map(
                               (rule) => Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 4.0),
                                 child: OverviewWidget(
                                   rules: rule.value,
-                                  operatorText: widget.operatorText,
+                                  operatorText: operatorText,
                                 ),
                               ),
                             )
@@ -226,10 +254,10 @@ class _RuleSetViewState extends State<RuleSetView> {
                   title: 'Output Actions',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.ruleSet.rules?.entries.map(
+                    children: ruleSet.rules?.entries.map(
                           (rules) {
-                            Rule? newRules = widget.ruleSetDetails
-                                .call(widget.rulesetId)
+                            Rule? newRules = ruleSetDetails
+                                .call(rulesetId)
                                 ?.executedRules
                                 ?.firstWhere(
                                   (e) => e.ruleId == rules.key,
@@ -248,10 +276,7 @@ class _RuleSetViewState extends State<RuleSetView> {
                   ),
                 ),
               ],
-            )
-        ],
-      ),
-    );
+            );
   }
 
   TextStyle get _blueLabelTextStyle => const TextStyle(

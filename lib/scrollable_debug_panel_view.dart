@@ -1,6 +1,7 @@
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:debug_panel_sample/debug_panel_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MainPage extends StatelessWidget {
   final Response response;
@@ -16,30 +17,61 @@ class MainPage extends StatelessWidget {
         response.debug?.adminRules?.dictionaries?.rulesets;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color(0xFFF0F3F5),
         body: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
               pinned: true,
               delegate: StickyHeaderDelegate(
-                child: const Text(
-                  'Debug Information',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/bug.svg',
+                        width: 16.0,
+                        height: 22.0,
+                      ),
+                      const SizedBox(width: 10.0,),
+                      const Expanded(
+                        child: Text(
+                          'Debug Information',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      InkWell(
+                        child: const Icon(
+                          Icons.close,
+                          color: Color(0xFF0D4689),
+                        ),
+                        onTap: () {
+                          
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                minHeight: 22,
-                maxHeight: 22,
+                minHeight: 44,
+                maxHeight: 44,
+                bgColor: const Color(0xFFF0F3F5),
               ),
             ),
             SliverPersistentHeader(
               pinned: false,
               delegate: StickyHeaderDelegate(
+                bgColor: Colors.transparent,
                 minHeight: 0,
-                maxHeight: 80,
-                child: Container(
-                  color: Colors.amber,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'This is the description text. It will disappear as you scroll down.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                maxHeight: 74,
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SingleChildScrollView(
+                    child: DebugInformationDetailsView(
+                      details: [
+                        'App version: 0.0.0',
+                        'Ama-Client-Ref:b2232dd1-fe09-4de9-b3b4-12a5a8736e77',
+                        'Started at: 2024-05-21T03:41:44.64OX',
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -50,24 +82,96 @@ class MainPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Hide Ruleset History'),
+                    const CheckboxView(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateColor.resolveWith((states) => const Color(0xFF0D4689),),
+                          foregroundColor: WidgetStateColor.resolveWith((states) => Colors.white,),
+                          textStyle: WidgetStateTextStyle.resolveWith(
+                            (states) {
+                              return const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12.0,
+                              );
+                            },
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: const Text('Hide Ruleset History'),
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    const TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Ruleset Execution History',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Color(0xFF0D4689),
                         ),
-                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                    const SizedBox(height: 4,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextField(
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Search',
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12.0,
+                              horizontal: 16.0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(22.0), // Corner radius
+                              borderSide: const BorderSide(
+                                color: Color(0xFFCED8DD), // Warna border (#CED8DD)
+                                width: 1.0, // Ketebalan border
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder( // Border saat TextField aktif
+                              borderRadius: BorderRadius.circular(22.0),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFCED8DD), // Warna border (#CED8DD)
+                                width: 1.0, // Ketebalan border
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder( // Border saat TextField fokus
+                              borderRadius: BorderRadius.circular(22.0),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFCED8DD), // Warna border (#CED8DD)
+                                width: 1.0, // Ketebalan border
+                              ),
+                            ),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: SvgPicture.asset(
+                                'assets/search.svg',
+                                fit: BoxFit.scaleDown,
+                              ),
+                            ),
+                            hintStyle: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14.0,
+                              color: Color(0xFF333333),
+                            )
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                minHeight: 150,
-                maxHeight: 150,
+                minHeight: 200,
+                maxHeight: 200,
+                bgColor: const Color(0xFFF0F3F5),
               ),
             ),
             SliverList(
@@ -76,25 +180,28 @@ class MainPage extends StatelessWidget {
                   final String? key = rulesets?.keys.toList()[index];
                   final RulesetsTemp? ruleset = rulesets?[key];
                   return ruleset != null
-                      ? CustomExpandablePanel(
-                          title: ruleset.name ?? '',
-                          status: 'APPLIED',
-                          content: HorizontalScrollableContent(
-                            ruleSet: ruleset,
-                            rulesetId: key ?? '',
-                            operatorText: (operatorCode) {
-                              return response.debug?.adminRules?.dictionaries
-                                      ?.operators?[operatorCode ?? ''] ??
-                                  '';
-                            },
-                            ruleSetDetails: (rulesetId) {
-                              return response.debug?.adminRules?.rulesets
-                                  ?.firstWhere(
-                                (element) => element.rulesetId == rulesetId,
-                              );
-                            },
+                      ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: CustomExpandablePanel(
+                            title: ruleset.name ?? '',
+                            status: 'APPLIED',
+                            content: HorizontalScrollableContent(
+                              ruleSet: ruleset,
+                              rulesetId: key ?? '',
+                              operatorText: (operatorCode) {
+                                return response.debug?.adminRules?.dictionaries
+                                        ?.operators?[operatorCode ?? ''] ??
+                                    '';
+                              },
+                              ruleSetDetails: (rulesetId) {
+                                return response.debug?.adminRules?.rulesets
+                                    ?.firstWhere(
+                                  (element) => element.rulesetId == rulesetId,
+                                );
+                              },
+                            ),
                           ),
-                        )
+                      )
                       : const SizedBox();
                 },
                 childCount: rulesets?.keys.length ?? 0,
@@ -103,6 +210,89 @@ class MainPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CheckboxView extends StatefulWidget {
+  const CheckboxView({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _CheckboxViewState();
+}
+
+class _CheckboxViewState extends State<CheckboxView> {
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+          value: isChecked, 
+          side: const BorderSide(
+            color: Color(0xFFA7B6BF),
+            width: 1.0,
+          ),
+          checkColor: Colors.white,
+          activeColor: const Color(0xFF0D4689),
+          onChanged: (value) => setState(() => isChecked = value!),
+        ),
+        const Text(
+          'Show localisation key',
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: 12.0,
+            color: Color(0xFF0D4689),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class DebugInformationDetailsView extends StatelessWidget {
+  final List<String> details;
+
+  const DebugInformationDetailsView({
+    super.key,
+    required this.details,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: details
+          .map(
+            (detail) => _pointText(detail),
+          ).toList(),
+    );
+  }
+
+  Widget _pointText(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '•',
+          style: TextStyle(
+            color: Color(0xFF333333),
+          ),
+        ),
+        const SizedBox(
+          width: 8.0,
+        ),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: 12,
+              color: Color(0xFF333333),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -347,18 +537,20 @@ class StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double minHeight;
   final double maxHeight;
+  final Color? bgColor;
 
   StickyHeaderDelegate({
     required this.child,
     required this.minHeight,
     required this.maxHeight,
+    this.bgColor,
   });
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return ColoredBox(
-      color: Colors.white,
+      color: bgColor ?? Colors.white,
       child: SizedBox.expand(
         child: child,
       ),

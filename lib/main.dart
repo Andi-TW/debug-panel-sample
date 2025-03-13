@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:debug_panel_sample/common_debug_panel_widget.dart';
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:debug_panel_sample/debug_panel_view.dart';
 import 'package:debug_panel_sample/scrollable_debug_panel_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,15 +17,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       // home: const DebugPanelPage(),
-      home: MainPage(
-        response: Response.fromJson(jsonDecode(dataJson)),
+      home: CommonDebugPanelWidget(
+        child: Container(
+          color: Colors.white,
+          child: const Center(
+            child: Text(
+              'App Page',
+              style: TextStyle(
+                color: Colors.grey,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -42,7 +55,7 @@ class DebugPanelPage extends StatelessWidget {
         ),
       ),
       body: DebugPanelView(
-        response: Response.fromJson(jsonDecode(dataJson)),
+        response: DebugPanelResponse.fromJson(jsonDecode(dataJson)),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

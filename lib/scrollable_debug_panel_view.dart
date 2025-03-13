@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainPage extends StatelessWidget {
-  final Response response;
+  final DebugPanelResponse response;
+  final VoidCallback onTapRulesButton;
+  final VoidCallback onTapCloseButton;
 
   const MainPage({
     super.key,
     required this.response,
+    required this.onTapRulesButton,
+    required this.onTapCloseButton,
   });
 
   @override
@@ -40,13 +44,11 @@ class MainPage extends StatelessWidget {
                         ),
                       ),
                       InkWell(
+                        onTap: onTapCloseButton,
                         child: const Icon(
                           Icons.close,
                           color: Color(0xFF0D4689),
                         ),
-                        onTap: () {
-                          
-                        },
                       ),
                     ],
                   ),
@@ -56,23 +58,15 @@ class MainPage extends StatelessWidget {
                 bgColor: const Color(0xFFF0F3F5),
               ),
             ),
-            SliverPersistentHeader(
-              pinned: false,
-              delegate: StickyHeaderDelegate(
-                bgColor: Colors.transparent,
-                minHeight: 0,
-                maxHeight: 74,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: SingleChildScrollView(
-                    child: DebugInformationDetailsView(
-                      details: [
-                        'App version: 0.0.0',
-                        'Ama-Client-Ref:b2232dd1-fe09-4de9-b3b4-12a5a8736e77',
-                        'Started at: 2024-05-21T03:41:44.64OX',
-                      ],
-                    ),
-                  ),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: DebugInformationDetailsView(
+                  details: [
+                    'App version: 0.0.0',
+                    'Ama-Client-Ref:b2232dd1-fe09-4de9-b3b4-12a5a8736e77',
+                    'Started at: 2024-05-21T03:41:44.64OX',
+                  ],
                 ),
               ),
             ),
@@ -98,7 +92,7 @@ class MainPage extends StatelessWidget {
                             },
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: onTapRulesButton,
                         child: const Text('Hide Ruleset History'),
                       ),
                     ),

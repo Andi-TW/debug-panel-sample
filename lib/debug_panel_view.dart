@@ -2,7 +2,7 @@ import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:flutter/material.dart';
 
 class DebugPanelView extends StatelessWidget {
-  final Response response;
+  final DebugPanelResponse response;
 
   const DebugPanelView({
     super.key,

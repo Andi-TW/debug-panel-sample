@@ -411,15 +411,15 @@ class AdminRules {
   }
 }
 
-class Response {
+class DebugPanelResponse {
   Debug? debug;
 
-  Response({
+  DebugPanelResponse({
     this.debug,
   });
 
-  factory Response.fromJson(Map<String, dynamic> json) {
-    return Response(
+  factory DebugPanelResponse.fromJson(Map<String, dynamic> json) {
+    return DebugPanelResponse(
       debug: json['debug'] != null ? Debug.fromJson(json['debug']) : null,
     );
   }

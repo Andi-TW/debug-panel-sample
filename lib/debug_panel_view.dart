@@ -839,6 +839,79 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
     }
 
     List<Widget> children = [];
+
+    //TODO change children assignment from forEach to use spread operator for more readability
+    ///example :
+    ///
+    /// List<Widget> children = [
+    //   // Mapping over `components`
+    //   ...?action.components?.expand((component) => [
+    //     propertyLabel(
+    //       label.conditionViewLabel.componentsConfiguration,
+    //       component.component ?? '',
+    //     ),
+    //     ...?component.properties?.map((property) => Row(
+    //       children: [
+    //         propertyLabel(
+    //           label.conditionViewLabel.propertyLabel,
+    //           property.property ?? '',
+    //         ),
+    //         const SizedBox(width: 8.0),
+    //         propertyLabel(
+    //           label.conditionViewLabel.valueLabel,
+    //           property.value ?? '',
+    //         ),
+    //       ],
+    //     )),
+    //   ]),
+    //
+    //   // Mapping over `placeholders`
+    //   ...?action.placeholders?.map((placeholder) => Row(
+    //     children: [
+    //       propertyLabel(
+    //         label.conditionViewLabel.positionLabel,
+    //         placeholder.position ?? '',
+    //       ),
+    //       const SizedBox(width: 8.0),
+    //       propertyLabel(
+    //         label.conditionViewLabel.contentsLabel,
+    //         placeholder.contents ?? '',
+    //       ),
+    //     ],
+    //   )),
+    //
+    //   // Mapping over `replacements`
+    //   ...?action.replacements?.map((replacement) => Row(
+    //     children: [
+    //       propertyLabel(
+    //         label.conditionViewLabel.replaceLabel,
+    //         replacement.replace ?? '',
+    //       ),
+    //       const SizedBox(width: 8.0),
+    //       propertyLabel(
+    //         label.conditionViewLabel.withLabel,
+    //         replacement.replaceWith ?? '',
+    //       ),
+    //     ],
+    //   )),
+    //
+    //   // Mapping over `variables`
+    //   ...?action.variables?.map((variable) => Row(
+    //     children: [
+    //       propertyLabel(
+    //         label.conditionViewLabel.variableLabel,
+    //         variable.variable ?? '',
+    //       ),
+    //       const SizedBox(width: 8.0),
+    //       propertyLabel(
+    //         label.conditionViewLabel.valueLabel,
+    //         variable.value ?? '',
+    //       ),
+    //     ],
+    //   )),
+    // ];
+
+
     action.components?.forEach(
       (component) {
         children.add(
@@ -1095,6 +1168,8 @@ class BookingDebugPanelConditionView extends StatelessWidget {
     }
 
     List<Widget> children = [];
+
+    //TODO if possible, use spread operator instead of forEach like example in TODO line 843
     action.components?.forEach(
       (component) {
         children.add(
@@ -1893,6 +1968,8 @@ class ExecutedRulesView extends StatelessWidget {
   List<Widget> _generatePropertiesText(BookingDebugPanelRule? rules) {
     if (rules == null) return [];
     List<Widget> widgets = [];
+
+    //TODO if possible, use spread operator instead of forEach like example in TODO line 843
     rules.actions?.forEach(
       (action) {
         action.components?.forEach(

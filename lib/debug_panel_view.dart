@@ -1,340 +1,29 @@
-import 'dart:convert';
-
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
-class BookingDebugPanelPage extends StatelessWidget {
-  final DebugPanelResponse response;
-  final BookingDebugPanelPageLabel label;
-  final BookingDebugPanelPageDecoration decoration;
-  final VoidCallback onTapRulesButton;
-  final VoidCallback onTapCloseButton;
-
-  const BookingDebugPanelPage({
-    super.key,
-    required this.response,
-    required this.label,
-    required this.decoration,
-    required this.onTapRulesButton,
-    required this.onTapCloseButton,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final Map<String, RulesetsTemp>? rulesets =
-        response.debug?.adminRules?.dictionaries?.rulesets;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF0F3F5),
-        body: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: StickyHeaderDelegate(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      decoration.titleIcon,
-                      const SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: Text(
-                          label.titleLabel,
-                          style: decoration.titleStyle,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: onTapCloseButton,
-                        child: decoration.closeIcon,
-                      ),
-                    ],
-                  ),
-                ),
-                minHeight: 44,
-                maxHeight: 44,
-                bgColor: const Color(0xFFF0F3F5),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DebugInformationDetailsView(
-                  decoration: decoration.debugInformationDetailsViewDecoration,
-                  details: const [
-                    'App version: 0.0.0',
-                    'Ama-Client-Ref:b2232dd1-fe09-4de9-b3b4-12a5a8736e77',
-                    'Started at: 2024-05-21T03:41:44.64OX',
-                  ],
-                ),
-              ),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: StickyHeaderDelegate(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CheckboxView(
-                      label: label.showLocalisationLabel,
-                      initialValue: false,
-                      decoration: decoration.checkboxViewDecoration,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ElevatedButton(
-                        // Will change with the existing pilled button
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateColor.resolveWith(
-                            (states) => const Color(0xFF0D4689),
-                          ),
-                          foregroundColor: WidgetStateColor.resolveWith(
-                            (states) => Colors.white,
-                          ),
-                          textStyle: WidgetStateTextStyle.resolveWith(
-                            (states) {
-                              return const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12.0,
-                              );
-                            },
-                          ),
-                        ),
-                        onPressed: onTapRulesButton,
-                        child: Text(label.hideHistoryLabel),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        label.executionHistoryLabel,
-                        style: decoration.executionHistoryLabelStyle,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextField(
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: label.searchLabel,
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal: 16.0,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(22.0),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFCED8DD),
-                                  width: 1.0,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(22.0),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFCED8DD),
-                                  width: 1.0,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(22.0),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFCED8DD),
-                                  width: 1.0,
-                                ),
-                              ),
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: decoration.searchIcon,
-                              ),
-                              hintStyle: decoration.searchHintStyle),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                minHeight: 200,
-                maxHeight: 200,
-                bgColor: const Color(0xFFF0F3F5),
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final String? key = rulesets?.keys.toList()[index];
-                  final RulesetsTemp? ruleset = rulesets?[key];
-                  return ruleset != null
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: DebugPanelExpandablePanel(
-                            label: DebugPanelExpandablePanelLabel(
-                              title: ruleset.name ?? '',
-                              status: 'APPLIED',
-                            ),
-                            decoration: decoration.expandablePanelDecoration,
-                            content: HorizontalScrollableContent(
-                              ruleSet: ruleset,
-                              rulesetId: key ?? '',
-                              thumbColor: decoration.thumbColor,
-                              operatorText: (operatorCode) {
-                                return response.debug?.adminRules?.dictionaries
-                                        ?.operators?[operatorCode ?? ''] ??
-                                    '';
-                              },
-                              ruleSetDetails: (rulesetId) {
-                                return response.debug?.adminRules?.rulesets
-                                    ?.firstWhere(
-                                  (element) => element.rulesetId == rulesetId,
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                      : const SizedBox();
-                },
-                childCount: rulesets?.keys.length ?? 0,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class BookingDebugPanelPageLabel {
-  final String titleLabel;
-  final String showLocalisationLabel;
-  final String hideHistoryLabel;
-  final String executionHistoryLabel;
-  final String searchLabel;
-
-  BookingDebugPanelPageLabel({
-    required this.titleLabel,
-    required this.showLocalisationLabel,
-    required this.hideHistoryLabel,
-    required this.executionHistoryLabel,
-    required this.searchLabel,
-  });
-}
-
-class BookingDebugPanelPageDecoration {
-  final DebugInformationDetailsViewDecoration debugInformationDetailsViewDecoration;
-  final CheckboxViewDecoration checkboxViewDecoration;
-  final TextStyle titleStyle;
-  final TextStyle executionHistoryLabelStyle;
-  final TextStyle searchHintStyle;
-  final Widget searchIcon;
-  final DebugPanelExpandablePanelDecorationImpl expandablePanelDecoration;
-  final Color? thumbColor;
-  final Widget titleIcon;
-  final Widget closeIcon;
-
-  BookingDebugPanelPageDecoration({
-    required this.debugInformationDetailsViewDecoration,
-    required this.checkboxViewDecoration,
-    required this.titleStyle,
-    required this.executionHistoryLabelStyle,
-    required this.searchHintStyle,
-    required this.searchIcon,
-    required this.expandablePanelDecoration,
-    required this.thumbColor,
-    required this.titleIcon,
-    required this.closeIcon,
-  });
-}
-
-class BookingDebugPanelPageDecorationImpl
-    implements BookingDebugPanelPageDecoration {
-  @override
-  DebugInformationDetailsViewDecoration
-      get debugInformationDetailsViewDecoration =>
-          DebugInformationDetailsViewDecorationImpl();
-
-  @override
-  CheckboxViewDecoration get checkboxViewDecoration =>
-      CheckboxViewDecorationImpl();
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      );
-
-  @override
-  TextStyle get executionHistoryLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 12,
-        color: Color(0xFF0D4689),
-      );
-
-  @override
-  TextStyle get searchHintStyle => const TextStyle(
-        fontWeight: FontWeight.w400,
-        fontSize: 14.0,
-        color: Color(0xFF333333),
-      );
-
-  @override
-  Widget get searchIcon => SvgPicture.asset(
-        'assets/search.svg',
-        fit: BoxFit.scaleDown,
-      );
-
-  @override
-  DebugPanelExpandablePanelDecorationImpl get expandablePanelDecoration =>
-      DebugPanelExpandablePanelDecorationImpl();
-
-  @override
-  Color? get thumbColor => const Color(0xFF0D4689);
-
-  @override
-  Widget get titleIcon => SvgPicture.asset(
-        'assets/bug.svg',
-        width: 16.0,
-        height: 22.0,
-      );
-
-  @override
-  Widget get closeIcon => const Icon(
-        Icons.close,
-        color: Color(0xFF0D4689),
-      );
-}
 
 class DebugPanelDetailsView extends StatelessWidget {
-  final DebugPanelResponse response;
+  final BookingDebugPanelResponse response;
+  final BookingDebugPanelDictionaries dictionaries;
   final BookingDebugPanelRuleSetViewLabel label;
   final BookingDebugPanelRuleSetViewDecoration decoration;
 
   const DebugPanelDetailsView({
     super.key,
     required this.response,
+    required this.dictionaries,
     required this.label,
     required this.decoration,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, RulesetsTemp>? rulesets =
-        response.debug?.adminRules?.dictionaries?.rulesets;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: rulesets?.entries.map(
+          children: dictionaries.rulesets?.entries.map(
                 (e) {
                   return BookingDebugPanelRuleSetView(
                     initialExpanded: true,
@@ -343,9 +32,7 @@ class DebugPanelDetailsView extends StatelessWidget {
                     label: label,
                     decoration: decoration,
                     operatorText: (operatorCode) =>
-                        response.debug?.adminRules?.dictionaries
-                            ?.operators?[operatorCode ?? ''] ??
-                        '',
+                        dictionaries.operators?[operatorCode ?? ''] ?? '',
                     ruleSetDetails: (rulesetId) =>
                         response.debug?.adminRules?.rulesets?.firstWhere(
                       (element) => element.rulesetId == rulesetId,
@@ -363,11 +50,11 @@ class DebugPanelDetailsView extends StatelessWidget {
 class BookingDebugPanelRuleSetView extends StatefulWidget {
   final bool initialExpanded;
   final String rulesetId;
-  final RulesetsTemp ruleSet;
+  final BookingDebugPanelRulesetsTemp ruleSet;
   final BookingDebugPanelRuleSetViewLabel label;
   final BookingDebugPanelRuleSetViewDecoration decoration;
   final String Function(String? operatorCode) operatorText;
-  final RuleSet? Function(String? rulesetId) ruleSetDetails;
+  final BookingDebugPanelRuleSet? Function(String? rulesetId) ruleSetDetails;
 
   const BookingDebugPanelRuleSetView({
     super.key,
@@ -427,7 +114,7 @@ class _BookingDebugPanelRuleSetViewState
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4.0),
                       border: Border.all(
-                        color: widget.decoration.statusColor ?? Colors.grey,
+                        color: widget.decoration.positiveStatusColor ?? Colors.grey,
                         width: 1.0,
                       )),
                   padding: const EdgeInsets.symmetric(
@@ -436,7 +123,7 @@ class _BookingDebugPanelRuleSetViewState
                   ),
                   child: Text(
                     'APPLIED',
-                    style: widget.decoration.statusStyle,
+                    style: widget.decoration.positiveStatusStyle,
                   ),
                 ),
               ],
@@ -469,13 +156,13 @@ class BookingDebugPanelRuleSetViewLabel {
 
 class BookingDebugPanelRuleSetViewDecoration {
   final TextStyle titleStyle;
-  final TextStyle statusStyle;
-  final Color? statusColor;
+  final TextStyle positiveStatusStyle;
+  final Color? positiveStatusColor;
 
   BookingDebugPanelRuleSetViewDecoration({
     required this.titleStyle,
-    required this.statusStyle,
-    required this.statusColor,
+    required this.positiveStatusStyle,
+    required this.positiveStatusColor,
   });
 }
 
@@ -489,23 +176,23 @@ class BookingDebugPanelRuleSetViewDecorationImpl
       );
 
   @override
-  TextStyle get statusStyle => const TextStyle(
+  TextStyle get positiveStatusStyle => const TextStyle(
         color: Color(0xFF1DB36E),
         fontWeight: FontWeight.w700,
         fontSize: 10.0,
       );
 
   @override
-  Color? get statusColor => const Color(0xFF1DB36E);
+  Color? get positiveStatusColor => const Color(0xFF1DB36E);
 }
 
 class BookingDebugPanelRulesSetContentView extends StatelessWidget {
-  final RulesetsTemp ruleSet;
+  final BookingDebugPanelRulesetsTemp ruleSet;
   final String rulesetId;
   final BookingDebugPanelRulesSetContentViewLabel label;
   final BookingDebugPanelRulesSetContentViewDecoration decoration;
   final String Function(String? operatorCode) operatorText;
-  final RuleSet? Function(String? rulesetId) ruleSetDetails;
+  final BookingDebugPanelRuleSet? Function(String? rulesetId) ruleSetDetails;
 
   const BookingDebugPanelRulesSetContentView({
     super.key,
@@ -634,7 +321,7 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: ruleSet.rules?.entries.map(
                   (rules) {
-                    Rule? newRules = ruleSetDetails
+                    BookingDebugPanelRule? newRules = ruleSetDetails
                         .call(rulesetId)
                         ?.executedRules
                         ?.firstWhere(
@@ -1066,7 +753,7 @@ class ActionPillContentViewDecorationImpl implements PillContentViewDecoration {
 }
 
 class BookingDebugPanelOverviewWidget extends StatelessWidget {
-  final RulesTemp rules;
+  final BookingDebugPanelRulesTemp rules;
   final BookingDebugPanelOverviewWidgetLabel label;
   final BookingDebugPanelOverviewWidgetDecoration decoration;
   final String Function(String? operatorCode) operatorText;
@@ -1102,7 +789,7 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
     );
   }
 
-  Widget _generateOverviewViews(RuleElement overview) {
+  Widget _generateOverviewViews(BookingDebugPanelRuleElement overview) {
     if (overview.type == 'condition') {
       return BookingDebugPanelConditionView(
         conditions: overview.conditions ?? [],
@@ -1123,7 +810,7 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
       );
     } else if (overview.actionType != null) {
       return _generateActionView(
-        RulesAction(
+        BookingDebugPanelRulesAction(
           actionType: overview.actionType,
           components: overview.components,
         ),
@@ -1132,7 +819,7 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
     return const SizedBox();
   }
 
-  Widget _generateActionView(RulesAction action) {
+  Widget _generateActionView(BookingDebugPanelRulesAction action) {
     Widget propertyLabel(String tag, String value) {
       return Row(
         children: [
@@ -1292,9 +979,9 @@ class BookingDebugPanelOverviewWidgetDecorationImpl
 }
 
 class BookingDebugPanelConditionView extends StatelessWidget {
-  final List<Condition> conditions;
-  final List<RuleElement>? success;
-  final List<RuleElement>? failed;
+  final List<BookingDebugPanelCondition> conditions;
+  final List<BookingDebugPanelRuleElement>? success;
+  final List<BookingDebugPanelRuleElement>? failed;
   final BookingDebugPanelConditionViewLabel label;
   final BookingDebugPanelConditionViewDecoration decoration;
   final String Function(String? operatorCode) operatorText;
@@ -1367,7 +1054,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
     );
   }
 
-  Widget _generateElementViews(RuleElement element) {
+  Widget _generateElementViews(BookingDebugPanelRuleElement element) {
     if (element.type == 'condition') {
       return BookingDebugPanelConditionView(
         conditions: element.conditions ?? [],
@@ -1391,7 +1078,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
     return const SizedBox();
   }
 
-  Widget _generateActionView(RulesAction action) {
+  Widget _generateActionView(BookingDebugPanelRulesAction action) {
     Widget propertyLabel(String tag, String value) {
       return RichText(
         text: TextSpan(
@@ -1499,7 +1186,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
   }
 
   List<Widget> _generateConditionViews(
-      {required List<Condition> conditions,
+      {required List<BookingDebugPanelCondition> conditions,
       required int depth,
       required Color? baseColor}) {
     List<Widget> widgets = [];
@@ -1569,7 +1256,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
   }
 
   Widget _generateSingleConditionView({
-    required Condition condition,
+    required BookingDebugPanelCondition condition,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -1705,7 +1392,7 @@ class ConditionCompareView extends StatelessWidget {
 }
 
 class BookingDebugPanelConditionCompareDetailsView extends StatelessWidget {
-  final Operand? operand;
+  final BookingDebugPanelOperand? operand;
   final BookingDebugPanelConditionCompareDetailsViewDecoration decoration;
   final String Function(String? operatorCode) operatorText;
 
@@ -2032,7 +1719,7 @@ class GreenConditionResultViewDecorationImpl
 }
 
 class ExecutedRulesView extends StatelessWidget {
-  final Rule? rule;
+  final BookingDebugPanelRule? rule;
   final ExecutedRulesViewLabel label;
   final ExecutedRulesViewDecoration decoration;
 
@@ -2203,7 +1890,7 @@ class ExecutedRulesView extends StatelessWidget {
     );
   }
 
-  List<Widget> _generatePropertiesText(Rule? rules) {
+  List<Widget> _generatePropertiesText(BookingDebugPanelRule? rules) {
     if (rules == null) return [];
     List<Widget> widgets = [];
     rules.actions?.forEach(
@@ -2509,24 +2196,6 @@ class CheckboxViewDecoration {
   });
 }
 
-class CheckboxViewDecorationImpl implements CheckboxViewDecoration {
-  @override
-  Color? get activeColor => const Color(0xFF0D4689);
-
-  @override
-  Color? get borderColor => const Color(0xFFA7B6BF);
-
-  @override
-  Color? get checkColor => Colors.white;
-
-  @override
-  TextStyle get labelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF0D4689),
-      );
-}
-
 class DebugPanelExpandablePanel extends StatefulWidget {
   final Widget content;
   final DebugPanelExpandablePanelLabel label;
@@ -2611,7 +2280,7 @@ class _DebugPanelExpandablePanelState extends State<DebugPanelExpandablePanel>
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
                         border: Border.all(
-                          color: widget.decoration.statusColor ?? Colors.grey,
+                          color: widget.decoration.positiveStatusColor ?? Colors.grey,
                           width: 1.0,
                         )),
                     padding: const EdgeInsets.symmetric(
@@ -2621,7 +2290,7 @@ class _DebugPanelExpandablePanelState extends State<DebugPanelExpandablePanel>
                     child: Text(
                       widget.label.status,
                       style: TextStyle(
-                        color: widget.decoration.statusColor,
+                        color: widget.decoration.positiveStatusColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 10.0,
                       ),
@@ -2656,33 +2325,21 @@ class DebugPanelExpandablePanelLabel {
 }
 
 class DebugPanelExpandablePanelDecoration {
-  final Color? statusColor;
+  final Color? positiveStatusColor;
   final TextStyle titleStyle;
 
   DebugPanelExpandablePanelDecoration({
-    required this.statusColor,
+    required this.positiveStatusColor,
     required this.titleStyle,
   });
 }
 
-class DebugPanelExpandablePanelDecorationImpl implements DebugPanelExpandablePanelDecoration {
-  @override
-  Color? get statusColor => const Color(0xFF1DB36E);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 12.0,
-        color: Color(0xFF333333),
-      );
-}
-
 class HorizontalScrollableContent extends StatefulWidget {
-  final RulesetsTemp ruleSet;
+  final BookingDebugPanelRulesetsTemp ruleSet;
   final String rulesetId;
   final Color? thumbColor;
   final String Function(String? operatorCode) operatorText;
-  final RuleSet? Function(String? rulesetId) ruleSetDetails;
+  final BookingDebugPanelRuleSet? Function(String? rulesetId) ruleSetDetails;
 
   const HorizontalScrollableContent({
     super.key, 

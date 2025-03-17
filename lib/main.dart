@@ -58,7 +58,8 @@ class DebugPanelWebPage extends StatelessWidget {
         ),
       ),
       body: DebugPanelDetailsView(
-        response: DebugPanelResponse.fromJson(jsonDecode(dataJson)),
+        response: BookingDebugPanelResponse.fromJson(jsonDecode(dataJson)),
+        dictionaries: BookingDebugPanelDictionaries.fromJson(jsonDecode(dictionariesJson)),
         decoration: BookingDebugPanelRuleSetViewDecorationImpl(),
         label: BookingDebugPanelRuleSetViewLabel(
           statusLabel: 'APPLIED',
@@ -111,6 +112,396 @@ class CommonDebugPanelWidgetDecorationImpl
   DebugPanelButtonDecoration get buttonDecoration =>
       DebugPanelButtonDecorationImpl();
 }
+
+const dictionariesJson = '''
+{
+    "operators": {
+        "has": "contains",
+        "eq": "is equal to",
+        "ne": "is not equal to",
+        "gt": "is greater than",
+        "gte": "is greater than or equal to",
+        "lt": "is less than",
+        "lte": "is less than or equal to",
+        "in": "is in list",
+        "nin": "is not in list",
+        "all": "contains all",
+        "regex": "matches pattern"
+    },
+    "rulesets": {
+        "88866fb8-76d7-4b4f-9773-40e6d5e0aca2": {
+            "name": "Flight Selection Page",
+            "rules": {
+                "99f10e19-0b85-4c3a-9c30-a9db9633f295": {
+                    "name": "Test Rule",
+                    "overview": [
+                        {
+                            "type": "condition",
+                            "conditions": [
+                                {
+                                    "conditionType": "single",
+                                    "operand": {
+                                        "lhs": {
+                                            "tag": "App",
+                                            "value": "Aircraft Type"
+                                        },
+                                        "operator": "eq",
+                                        "rhs": {
+                                            "tag": "Lit",
+                                            "value": "A312"
+                                        }
+                                    }
+                                },
+                                {
+                                    "conditionOperator": "AND",
+                                    "conditionType": "group",
+                                    "conditions": [
+                                        {
+                                            "conditionType": "single",
+                                            "operand": {
+                                                "lhs": {
+                                                    "tag": "App",
+                                                    "value": "Aircraft Type"
+                                                },
+                                                "operator": "eq",
+                                                "rhs": {
+                                                    "tag": "Lit",
+                                                    "value": "A321, A320, A333"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "conditionOperator": "OR",
+                                            "conditionType": "single",
+                                            "operand": {
+                                                "lhs": {
+                                                    "tag": "App",
+                                                    "value": "First Origin Check"
+                                                },
+                                                "operator": "eq",
+                                                "rhs": {
+                                                    "tag": "Lit",
+                                                    "value": "true"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "conditionOperator": "AND",
+                                            "conditionType": "group",
+                                            "conditions": [
+                                                {
+                                                    "conditionType": "single",
+                                                    "operand": {
+                                                        "lhs": {
+                                                            "tag": "App",
+                                                            "value": "Aircraft Type"
+                                                        },
+                                                        "operator": "eq",
+                                                        "rhs": {
+                                                            "tag": "Lit",
+                                                            "value": "A321, A320, A333"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "conditionOperator": "OR",
+                                                    "conditionType": "single",
+                                                    "operand": {
+                                                        "lhs": {
+                                                            "tag": "App",
+                                                            "value": "First Origin Check"
+                                                        },
+                                                        "operator": "eq",
+                                                        "rhs": {
+                                                            "tag": "Lit",
+                                                            "value": "true"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "conditionOperator": "AND",
+                                    "conditionType": "single",
+                                    "operand": {
+                                        "lhs": {
+                                            "tag": "App",
+                                            "value": "Has Selected Insurance"
+                                        },
+                                        "operator": "eq",
+                                        "rhs": {
+                                            "tag": "App",
+                                            "value": "Is Time To Think Selected"
+                                        }
+                                    }
+                                }
+                            ],
+                            "success": [
+                                {
+                                    "type": "action",
+                                    "actions": [
+                                        {
+                                            "actionType": "Set Component Configuration",
+                                            "components": [
+                                                {
+                                                    "component": "Credit Card Fee",
+                                                    "properties": [
+                                                        {
+                                                            "property": "Should Display",
+                                                            "value": "true"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "action",
+                                    "actions": [
+                                        {
+                                            "actionType": "Replace Localisation",
+                                            "replacements": [
+                                                {
+                                                    "replace": "old-localisation-key",
+                                                    "with": "new-localisation-key"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "action",
+                                    "actions": [
+                                        {
+                                            "actionType": "Set Variable",
+                                            "variables": [
+                                                {
+                                                    "variable": "Flow Type",
+                                                    "value": "booking"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "action",
+                                    "actions": [
+                                        {
+                                            "actionType": "Set Placeholder",
+                                            "placeholders": [
+                                                {
+                                                    "position": "top",
+                                                    "contents": "ph-en-m-flight-selection-mid-PricePerPax-my"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "condition",
+                                    "conditions": [
+                                        {
+                                            "conditionType": "single",
+                                            "operand": {
+                                                "lhs": {
+                                                    "tag": "App",
+                                                    "value": "Aircraft Type"
+                                                },
+                                                "operator": "eq",
+                                                "rhs": {
+                                                    "tag": "Lit",
+                                                    "value": "A321"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "success": [
+                                        {
+                                            "type": "action",
+                                            "actions": [
+                                                {
+                                                    "actionType": "Set Component Configuration",
+                                                    "components": [
+                                                        {
+                                                            "component": "Credit Card Fee",
+                                                            "properties": [
+                                                                {
+                                                                    "property": "Should Display",
+                                                                    "value": "true"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "failed": [
+                                {
+                                    "type": "action",
+                                    "actions": [
+                                        {
+                                            "actionType": "Set Component Configuration",
+                                            "components": [
+                                                {
+                                                    "component": "Enrich Quick SignUp",
+                                                    "properties": [
+                                                        {
+                                                            "property": "Should Display",
+                                                            "value": "true"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "condition",
+                                    "conditions": [
+                                        {
+                                            "conditionType": "single",
+                                            "operand": {
+                                                "lhs": {
+                                                    "tag": "App",
+                                                    "value": "Aircraft Type"
+                                                },
+                                                "operator": "eq",
+                                                "rhs": {
+                                                    "tag": "Lit",
+                                                    "value": "A321"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "success": [
+                                        {
+                                            "type": "action",
+                                            "actions": [
+                                                {
+                                                    "actionType": "Set Component Configuration",
+                                                    "components": [
+                                                        {
+                                                            "component": "Credit Card Fee",
+                                                            "properties": [
+                                                                {
+                                                                    "property": "Should Display",
+                                                                    "value": "true"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "fdc1b305-7a38-4de8-808b-a18f1c1d15b6": {
+                    "name": "Skip Shopping cart & Credit Card Fee",
+                    "overview": [
+                        {
+                            "type": "action",
+                            "items": [
+                                {
+                                    "actionType": "Set Component Configuration",
+                                    "components": [
+                                        {
+                                            "component": "Cart Summary Page",
+                                            "properties": [
+                                                {
+                                                    "property": "Should Display",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "action",
+                            "items": [
+                                {
+                                    "actionType": "Set Component Configuration",
+                                    "components": [
+                                        {
+                                            "component": "Credit Card Fee",
+                                            "properties": [
+                                                {
+                                                    "property": "Should Display",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "671b702e-9958-4c07-9734-746985b21e14": {
+                    "name": "Change Flight Button",
+                    "overview": [
+                        {
+                            "actionType": "Set Component Configuration",
+                            "components": [
+                                {
+                                    "component": "Change Flight Button",
+                                    "properties": [
+                                        {
+                                            "property": "Is Enabled",
+                                            "value": "true"
+                                        },
+                                        {
+                                            "property": "Applicable Flow Types",
+                                            "value": "check-in"
+                                        },
+                                        {
+                                            "property": "Button Display Delay",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "actionType": "Set Component Configuration",
+                            "components": [
+                                {
+                                    "component": "Change Flight Button",
+                                    "properties": [
+                                        {
+                                            "property": "Is Enabled",
+                                            "value": "true"
+                                        },
+                                        {
+                                            "property": "Applicable Flow Types",
+                                            "value": "check-in"
+                                        },
+                                        {
+                                            "property": "Button Display Delay",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+''';
 
 const dataJson = '''
 {
@@ -194,393 +585,6 @@ const dataJson = '''
   },
   "debug": {
     "adminRules": {
-      "dictionaries": {
-        "operators": {
-          "has": "contains",
-          "eq": "is equal to",
-          "ne": "is not equal to",
-          "gt": "is greater than",
-          "gte": "is greater than or equal to",
-          "lt": "is less than",
-          "lte": "is less than or equal to",
-          "in": "is in list",
-          "nin": "is not in list",
-          "all": "contains all",
-          "regex": "matches pattern"
-        },
-        "rulesets": {
-          "88866fb8-76d7-4b4f-9773-40e6d5e0aca2": {
-            "name": "Flight Selection Page",
-            "rules": {
-              "99f10e19-0b85-4c3a-9c30-a9db9633f295": {
-                "name": "Test Rule",
-                "overview": [
-                  {
-                    "type": "condition",
-                    "conditions": [ 
-                      {
-                        "conditionType": "single",
-                        "operand": {
-                          "lhs": {
-                            "tag": "App",
-                            "value": "Aircraft Type"
-                          },
-                          "operator": "eq",
-                          "rhs": {
-                            "tag": "Lit",
-                            "value": "A312" 
-                          }
-                        }
-                      },
-                      {
-                        "conditionOperator": "AND", 
-                        "conditionType": "group",
-                        "conditions": [ 
-                          {
-                            "conditionType": "single",
-                            "operand": {
-                              "lhs": {
-                                "tag": "App",
-                                "value": "Aircraft Type"
-                              },
-                              "operator": "eq",
-                              "rhs": {
-                                "tag": "Lit",
-                                "value": "A321, A320, A333" 
-                              }
-                            }
-                          },
-                          {
-                            "conditionOperator": "OR",
-                            "conditionType": "single",
-                            "operand": {
-                              "lhs": {
-                                "tag": "App",
-                                "value": "First Origin Check"
-                              },
-                              "operator": "eq",
-                              "rhs": {
-                                "tag": "Lit",
-                                "value": "true" 
-                              }
-                            }
-                          },
-                          {
-                            "conditionOperator": "AND", 
-                            "conditionType": "group",
-                            "conditions": [ 
-                              {
-                                "conditionType": "single",
-                                "operand": {
-                                  "lhs": {
-                                    "tag": "App",
-                                    "value": "Aircraft Type"
-                                  },
-                                  "operator": "eq",
-                                  "rhs": {
-                                    "tag": "Lit",
-                                    "value": "A321, A320, A333" 
-                                  }
-                                }
-                              },
-                              {
-                                "conditionOperator": "OR",
-                                "conditionType": "single",
-                                "operand": {
-                                  "lhs": {
-                                    "tag": "App",
-                                    "value": "First Origin Check"
-                                  },
-                                  "operator": "eq",
-                                  "rhs": {
-                                    "tag": "Lit",
-                                    "value": "true" 
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "conditionOperator": "AND",
-                        "conditionType": "single",
-                        "operand": {
-                          "lhs": {
-                            "tag": "App",
-                            "value": "Has Selected Insurance"
-                          },
-                          "operator": "eq",
-                          "rhs": {
-                            "tag": "App",
-                            "value": "Is Time To Think Selected"
-                          }
-                        }
-                      }
-                    ],
-                    "success": [
-                      {
-                        "type": "action",
-                        "actions": [ 
-                          {
-                            "actionType": "Set Component Configuration", 
-                            "components": [
-                              {
-                                "component": "Credit Card Fee",
-                                "properties": [
-                                  {
-                                    "property": "Should Display",
-                                    "value": "true"
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "action",
-                        "actions": [
-                          {
-                            "actionType": "Replace Localisation",
-                            "replacements": [
-                              {
-                                "replace": "old-localisation-key",
-                                "with": "new-localisation-key"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "action",
-                        "actions": [
-                          {
-                            "actionType": "Set Variable",
-                            "variables": [
-                              {
-                                "variable": "Flow Type",
-                                "value": "booking"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "action",
-                        "actions": [
-                          {
-                            "actionType": "Set Placeholder",
-                            "placeholders": [
-                              {
-                                "position": "top",
-                                "contents": "ph-en-m-flight-selection-mid-PricePerPax-my"
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "condition",
-                        "conditions": [
-                          {
-                            "conditionType": "single",
-                            "operand": {
-                              "lhs": {
-                                "tag": "App",
-                                "value": "Aircraft Type"
-                              },
-                              "operator": "eq",
-                              "rhs": {
-                                "tag": "Lit",
-                                "value": "A321"
-                              }
-                            }
-                          }
-                        ],
-                        "success": [
-                          {
-                            "type": "action",
-                            "actions": [
-                              {
-                                "actionType": "Set Component Configuration",
-                                "components": [
-                                  {
-                                    "component": "Credit Card Fee",
-                                    "properties": [
-                                      {
-                                        "property": "Should Display",
-                                        "value": "true"
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ],
-                    "failed": [
-                      {
-                        "type": "action",
-                        "actions": [
-                          {
-                            "actionType": "Set Component Configuration",
-                            "components": [
-                              {
-                                "component": "Enrich Quick SignUp",
-                                "properties": [
-                                  {
-                                    "property": "Should Display",
-                                    "value": "true"
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "condition",
-                        "conditions": [
-                          {
-                            "conditionType": "single",
-                            "operand": {
-                              "lhs": {
-                                "tag": "App",
-                                "value": "Aircraft Type"
-                              },
-                              "operator": "eq",
-                              "rhs": {
-                                "tag": "Lit",
-                                "value": "A321"
-                              }
-                            }
-                          }
-                        ],
-                        "success": [
-                          {
-                            "type": "action",
-                            "actions": [
-                              {
-                                "actionType": "Set Component Configuration",
-                                "components": [
-                                  {
-                                    "component": "Credit Card Fee",
-                                    "properties": [
-                                      {
-                                        "property": "Should Display",
-                                        "value": "true"
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              "fdc1b305-7a38-4de8-808b-a18f1c1d15b6": {
-                "name": "Skip Shopping cart & Credit Card Fee",
-                "overview": [
-                  {
-                    "type": "action",
-                    "items": [
-                      {
-                        "actionType": "Set Component Configuration",
-                        "components": [
-                          {
-                            "component": "Cart Summary Page",
-                            "properties": [
-                              {
-                                "property": "Should Display",
-                                "value": "true"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "action",
-                    "items": [
-                      {
-                        "actionType": "Set Component Configuration",
-                        "components": [
-                          {
-                            "component": "Credit Card Fee",
-                            "properties": [
-                              {
-                                "property": "Should Display",
-                                "value": "true"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              "671b702e-9958-4c07-9734-746985b21e14": {
-                "name": "Change Flight Button",
-                "overview": [
-                  {
-                    "actionType": "Set Component Configuration",
-                    "components": [
-                      {
-                        "component": "Change Flight Button",
-                        "properties": [
-                          {
-                            "property": "Is Enabled",
-                            "value": "true"
-                          },
-                          {
-                            "property": "Applicable Flow Types",
-                            "value": "check-in"
-                          },
-                          {
-                            "property": "Button Display Delay",
-                            "value": "1"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "actionType": "Set Component Configuration",
-                    "components": [
-                      {
-                        "component": "Change Flight Button",
-                        "properties": [
-                          {
-                            "property": "Is Enabled",
-                            "value": "true"
-                          },
-                          {
-                            "property": "Applicable Flow Types",
-                            "value": "check-in"
-                          },
-                          {
-                            "property": "Button Display Delay",
-                            "value": "1"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
       "rulesets": [
         {
           "rulesetId": "88866fb8-76d7-4b4f-9773-40e6d5e0aca2",

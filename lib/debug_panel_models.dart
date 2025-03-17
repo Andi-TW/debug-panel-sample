@@ -1,14 +1,14 @@
-class RuleElement {
+class BookingDebugPanelRuleElement {
   String? type;
-  List<RulesAction>? items;
-  List<RulesAction>? actions;
-  List<Condition>? conditions;
-  List<RuleElement>? success;
-  List<RuleElement>? failed;
+  List<BookingDebugPanelRulesAction>? items;
+  List<BookingDebugPanelRulesAction>? actions;
+  List<BookingDebugPanelCondition>? conditions;
+  List<BookingDebugPanelRuleElement>? success;
+  List<BookingDebugPanelRuleElement>? failed;
   String? actionType;
-  List<ActionComponent>? components;
+  List<BookingDebugPanelActionComponent>? components;
 
-  RuleElement({
+  BookingDebugPanelRuleElement({
     this.type,
     this.items,
     this.actions,
@@ -19,32 +19,42 @@ class RuleElement {
     this.components,
   });
 
-  factory RuleElement.fromJson(Map<String, dynamic> json) {
-    final List<RulesAction>? items = (json['items'] as List?)
+  factory BookingDebugPanelRuleElement.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelRulesAction>? items = (json['items'] as List?)
         ?.map(
-          (e) => RulesAction.fromJson(e),
-        ).toList();
-    final List<RulesAction>? actions = (json['actions'] as List?)
+          (e) => BookingDebugPanelRulesAction.fromJson(e),
+        )
+        .toList();
+    final List<BookingDebugPanelRulesAction>? actions =
+        (json['actions'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelRulesAction.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelCondition>? conditions =
+        (json['conditions'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelCondition.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelRuleElement>? success =
+        (json['success'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelRuleElement.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelRuleElement>? failed = (json['failed'] as List?)
         ?.map(
-          (e) => RulesAction.fromJson(e),
-        ).toList();
-    final List<Condition>? conditions = (json['conditions'] as List?)
-        ?.map(
-          (e) => Condition.fromJson(e),
-        ).toList();
-    final List<RuleElement>? success = (json['success'] as List?)
-        ?.map(
-          (e) => RuleElement.fromJson(e),
-        ).toList();
-    final List<RuleElement>? failed = (json['failed'] as List?)
-        ?.map(
-          (e) => RuleElement.fromJson(e),
-        ).toList();
-    final List<ActionComponent>? components = (json['components'] as List?)
-        ?.map(
-          (e) => ActionComponent.fromJson(e),
-        ).toList();
-    return RuleElement(
+          (e) => BookingDebugPanelRuleElement.fromJson(e),
+        )
+        .toList();
+    final List<BookingDebugPanelActionComponent>? components =
+        (json['components'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelActionComponent.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelRuleElement(
       type: json['type'] as String?,
       items: items,
       actions: actions,
@@ -57,148 +67,179 @@ class RuleElement {
   }
 }
 
-class Condition {
+class BookingDebugPanelCondition {
   String? conditionOperator;
   String? conditionType;
-  Operand? operand;
-  List<Condition>? conditions;
+  BookingDebugPanelOperand? operand;
+  List<BookingDebugPanelCondition>? conditions;
 
-  Condition({
+  BookingDebugPanelCondition({
     this.conditionOperator,
     this.conditionType,
     this.operand,
     this.conditions,
   });
 
-  factory Condition.fromJson(Map<String, dynamic> json) {
-    final List<Condition>? conditions = (json['conditions'] as List?)
-        ?.map(
-          (e) => Condition.fromJson(e),
-        ).toList();
-    return Condition(
+  factory BookingDebugPanelCondition.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelCondition>? conditions =
+        (json['conditions'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelCondition.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelCondition(
       conditionOperator: json['conditionOperator'] as String?,
       conditionType: json['conditionType'] as String?,
-      operand: json['operand'] != null ? Operand.fromJson(json['operand']) : null,
+      operand: json['operand'] != null
+          ? BookingDebugPanelOperand.fromJson(json['operand'])
+          : null,
       conditions: conditions,
     );
   }
 }
 
-class Operand {
-  OperandHs? lhs;
-  OperandHs? rhs;
+class BookingDebugPanelOperand {
+  BookingDebugPanelOperandHs? lhs;
+  BookingDebugPanelOperandHs? rhs;
   String? operator;
 
-  Operand({this.lhs, this.rhs, this.operator,});
+  BookingDebugPanelOperand({
+    this.lhs,
+    this.rhs,
+    this.operator,
+  });
 
-  factory Operand.fromJson(Map<String, dynamic> json) {
-    return Operand(
-      lhs: json['lhs'] != null ? OperandHs.fromJson(json['lhs']) : null,
-      rhs: json['rhs'] != null ? OperandHs.fromJson(json['rhs']) : null,
+  factory BookingDebugPanelOperand.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelOperand(
+      lhs: json['lhs'] != null
+          ? BookingDebugPanelOperandHs.fromJson(json['lhs'])
+          : null,
+      rhs: json['rhs'] != null
+          ? BookingDebugPanelOperandHs.fromJson(json['rhs'])
+          : null,
       operator: json['operator'] as String?,
     );
   }
 }
 
-class OperandHs {
+class BookingDebugPanelOperandHs {
   String? tag;
   String? value;
 
-  OperandHs({this.tag, this.value,});
+  BookingDebugPanelOperandHs({
+    this.tag,
+    this.value,
+  });
 
-  factory OperandHs.fromJson(Map<String, dynamic> json) {
-    return OperandHs(
+  factory BookingDebugPanelOperandHs.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelOperandHs(
       tag: json['tag'] as String?,
       value: json['value'] as String?,
     );
   }
 }
 
-class Property {
+class BookingDebugPanelProperty {
   String? property;
   String? value;
 
-  Property({this.property, this.value,});
+  BookingDebugPanelProperty({
+    this.property,
+    this.value,
+  });
 
-  factory Property.fromJson(Map<String, dynamic> json) {
-    return Property(
+  factory BookingDebugPanelProperty.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelProperty(
       property: json['property'] as String?,
       value: json['value'] as String?,
     );
   }
 }
 
-class ActionComponent {
+class BookingDebugPanelActionComponent {
   String? component;
-  List<Property>? properties;
+  List<BookingDebugPanelProperty>? properties;
 
-  ActionComponent({
+  BookingDebugPanelActionComponent({
     this.component,
     this.properties,
   });
 
-  factory ActionComponent.fromJson(Map<String, dynamic> json) {
-    final List<Property>? properties = (json['properties'] as List?)
-        ?.map(
-          (e) => Property.fromJson(e),
-        ).toList();
-    return ActionComponent(
+  factory BookingDebugPanelActionComponent.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelProperty>? properties =
+        (json['properties'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelProperty.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelActionComponent(
       component: json['component'] as String?,
       properties: properties,
     );
   }
 }
 
-class ActionReplacement {
+class BookingDebugPanelActionReplacement {
   String? replace;
   String? replaceWith;
 
-  ActionReplacement({this.replace, this.replaceWith,});
+  BookingDebugPanelActionReplacement({
+    this.replace,
+    this.replaceWith,
+  });
 
-  factory ActionReplacement.fromJson(Map<String, dynamic> json) {
-    return ActionReplacement(
+  factory BookingDebugPanelActionReplacement.fromJson(
+      Map<String, dynamic> json) {
+    return BookingDebugPanelActionReplacement(
       replace: json['replace'] as String?,
       replaceWith: json['with'] as String?,
     );
   }
 }
 
-class ActionVariable {
+class BookingDebugPanelActionVariable {
   String? variable;
   String? value;
 
-  ActionVariable({this.variable, this.value,});
+  BookingDebugPanelActionVariable({
+    this.variable,
+    this.value,
+  });
 
-  factory ActionVariable.fromJson(Map<String, dynamic> json) {
-    return ActionVariable(
+  factory BookingDebugPanelActionVariable.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelActionVariable(
       variable: json['variable'] as String?,
       value: json['value'] as String?,
     );
   }
 }
 
-class ActionPlaceholder {
+class BookingDebugPanelActionPlaceholder {
   String? position;
   String? contents;
 
-  ActionPlaceholder({this.position, this.contents,});
+  BookingDebugPanelActionPlaceholder({
+    this.position,
+    this.contents,
+  });
 
-  factory ActionPlaceholder.fromJson(Map<String, dynamic> json) {
-    return ActionPlaceholder(
+  factory BookingDebugPanelActionPlaceholder.fromJson(
+      Map<String, dynamic> json) {
+    return BookingDebugPanelActionPlaceholder(
       position: json['position'] as String?,
       contents: json['contents'] as String?,
     );
   }
 }
 
-class RulesAction {
+class BookingDebugPanelRulesAction {
   String? actionType;
-  List<ActionComponent>? components;
-  List<ActionReplacement>? replacements;
-  List<ActionVariable>? variables;
-  List<ActionPlaceholder>? placeholders;
+  List<BookingDebugPanelActionComponent>? components;
+  List<BookingDebugPanelActionReplacement>? replacements;
+  List<BookingDebugPanelActionVariable>? variables;
+  List<BookingDebugPanelActionPlaceholder>? placeholders;
 
-  RulesAction({
+  BookingDebugPanelRulesAction({
     this.actionType,
     this.components,
     this.replacements,
@@ -206,24 +247,32 @@ class RulesAction {
     this.placeholders,
   });
 
-  factory RulesAction.fromJson(Map<String, dynamic> json) {
-    final List<ActionComponent>? components = (json['components'] as List?)
-        ?.map(
-          (e) => ActionComponent.fromJson(e),
-        ).toList();
-    final List<ActionReplacement>? replacements = (json['replacements'] as List?)
-        ?.map(
-          (e) => ActionReplacement.fromJson(e),
-        ).toList();
-    final List<ActionVariable>? variables = (json['variables'] as List?)
-        ?.map(
-          (e) => ActionVariable.fromJson(e),
-        ).toList();
-    final List<ActionPlaceholder>? placeholders = (json['placeholders'] as List?)
-        ?.map(
-          (e) => ActionPlaceholder.fromJson(e),
-        ).toList();
-    return RulesAction(
+  factory BookingDebugPanelRulesAction.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelActionComponent>? components =
+        (json['components'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelActionComponent.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelActionReplacement>? replacements =
+        (json['replacements'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelActionReplacement.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelActionVariable>? variables =
+        (json['variables'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelActionVariable.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelActionPlaceholder>? placeholders =
+        (json['placeholders'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelActionPlaceholder.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelRulesAction(
       actionType: json['actionType'] as String?,
       components: components,
       replacements: replacements,
@@ -233,120 +282,134 @@ class RulesAction {
   }
 }
 
-class RulesTemp {
+class BookingDebugPanelRulesTemp {
   String? name;
-  List<RuleElement>? overview;
+  List<BookingDebugPanelRuleElement>? overview;
 
-  RulesTemp({
+  BookingDebugPanelRulesTemp({
     this.name,
     this.overview,
   });
 
-  factory RulesTemp.fromJson(Map<String, dynamic> json) {
-    final List<RuleElement>? overview = (json['overview'] as List?)
-        ?.map(
-          (e) => RuleElement.fromJson(e),
-        ).toList();
-    return RulesTemp(
+  factory BookingDebugPanelRulesTemp.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelRuleElement>? overview =
+        (json['overview'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelRuleElement.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelRulesTemp(
       name: json['name'] as String?,
       overview: overview,
     );
   }
 }
 
-class RulesetsTemp {
+class BookingDebugPanelRulesetsTemp {
   String? name;
-  Map<String, RulesTemp>? rules;
+  Map<String, BookingDebugPanelRulesTemp>? rules;
 
-  RulesetsTemp({
+  BookingDebugPanelRulesetsTemp({
     this.name,
     this.rules,
   });
 
-  factory RulesetsTemp.fromJson(Map<String, dynamic> json) {
+  factory BookingDebugPanelRulesetsTemp.fromJson(Map<String, dynamic> json) {
     final rules = (json['rules'] as Map?)?.map(
       (key, value) {
-        final rule = RulesTemp.fromJson(value);
-        return MapEntry<String, RulesTemp>(key, rule);
+        final rule = BookingDebugPanelRulesTemp.fromJson(value);
+        return MapEntry<String, BookingDebugPanelRulesTemp>(key, rule);
       },
     );
-    return RulesetsTemp(name: json['name'] as String?, rules: rules,);
+    return BookingDebugPanelRulesetsTemp(
+      name: json['name'] as String?,
+      rules: rules,
+    );
   }
 }
 
-class Dictionaries {
+class BookingDebugPanelDictionaries {
   Map<String, String>? operators;
-  Map<String, RulesetsTemp>? rulesets;
+  Map<String, BookingDebugPanelRulesetsTemp>? rulesets;
 
-  Dictionaries({
+  BookingDebugPanelDictionaries({
     this.operators,
     this.rulesets,
   });
 
-  factory Dictionaries.fromJson(Map<String, dynamic> json) {
+  factory BookingDebugPanelDictionaries.fromJson(Map<String, dynamic> json) {
     final rules = (json['rulesets'] as Map?)?.map(
       (key, value) {
-        final rule = RulesetsTemp.fromJson(value);
-        return MapEntry<String, RulesetsTemp>(key, rule);
+        final rule = BookingDebugPanelRulesetsTemp.fromJson(value);
+        return MapEntry<String, BookingDebugPanelRulesetsTemp>(key, rule);
       },
     );
-    return Dictionaries(
+    return BookingDebugPanelDictionaries(
       operators: (json['operators'] as Map?)?.map((key, value) => MapEntry(key, value?.toString() ?? ''),),
       rulesets: rules,
     );
   }
 }
 
-class RulePropertyValue {
+class BookingDebugPanelRulePropertyValue {
   String? current;
 
-  RulePropertyValue({this.current,});
+  BookingDebugPanelRulePropertyValue({
+    this.current,
+  });
 
-  factory RulePropertyValue.fromJson(Map<String, dynamic> json) {
-    return RulePropertyValue(
+  factory BookingDebugPanelRulePropertyValue.fromJson(
+      Map<String, dynamic> json) {
+    return BookingDebugPanelRulePropertyValue(
       current: json['current'] as String?,
     );
   }
 }
 
-class RuleProperty {
+class BookingDebugPanelRuleProperty {
   String? property;
-  RulePropertyValue? value;
+  BookingDebugPanelRulePropertyValue? value;
 
-  RuleProperty({
+  BookingDebugPanelRuleProperty({
     this.property,
     this.value,
   });
 
-  factory RuleProperty.fromJson(Map<String, dynamic> json) {
-    return RuleProperty(
+  factory BookingDebugPanelRuleProperty.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelRuleProperty(
       property: json['property'] as String?,
-      value: json['value'] != null ? RulePropertyValue.fromJson(json['value']) : null,
+      value: json['value'] != null
+          ? BookingDebugPanelRulePropertyValue.fromJson(json['value'])
+          : null,
     );
   }
 }
 
-class Rule {
+class BookingDebugPanelRule {
   String? ruleId;
-  List<RuleProperty>? variables;
-  List<RulesAction>? actions;
+  List<BookingDebugPanelRuleProperty>? variables;
+  List<BookingDebugPanelRulesAction>? actions;
 
-  Rule({
+  BookingDebugPanelRule({
     this.ruleId,
     this.variables,
     this.actions,
   });
 
-  factory Rule.fromJson(Map<String, dynamic> json) {
-    final List<RuleProperty>? variables = (json['variables'] as List?)
-        ?.map(
-          (e) => RuleProperty.fromJson(e),
-        ).toList();
-    final List<RulesAction>? actions = (json['actions'] as List?)
-        ?.map(
-          (e) => RulesAction.fromJson(e),
-        ).toList();
-    return Rule(
+  factory BookingDebugPanelRule.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelRuleProperty>? variables =
+        (json['variables'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelRuleProperty.fromJson(e),
+            )
+            .toList();
+    final List<BookingDebugPanelRulesAction>? actions =
+        (json['actions'] as List?)
+            ?.map(
+              (e) => BookingDebugPanelRulesAction.fromJson(e),
+            )
+            .toList();
+    return BookingDebugPanelRule(
       ruleId: json['ruleId'] as String?,
       variables: variables,
       actions: actions,
@@ -354,23 +417,23 @@ class Rule {
   }
 }
 
-class RuleSet {
+class BookingDebugPanelRuleSet {
   String? rulesetId;
   bool? isApplied;
-  List<Rule>? executedRules;
+  List<BookingDebugPanelRule>? executedRules;
 
-  RuleSet({
+  BookingDebugPanelRuleSet({
     this.rulesetId,
     this.isApplied,
     this.executedRules,
   });
 
-  factory RuleSet.fromJson(Map<String, dynamic> json) {
-    final List<Rule>? executedRules = (json['executedRules'] as List?)
+  factory BookingDebugPanelRuleSet.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelRule>? executedRules = (json['executedRules'] as List?)
         ?.map(
-          (e) => Rule.fromJson(e),
+          (e) => BookingDebugPanelRule.fromJson(e),
         ).toList();
-    return RuleSet(
+    return BookingDebugPanelRuleSet(
       rulesetId: json['rulesetId'] as String?,
       isApplied: json['isApplied'] as bool?,
       executedRules: executedRules,
@@ -378,49 +441,49 @@ class RuleSet {
   }
 }
 
-class Debug {
-  AdminRules? adminRules;
+class BookingDebugPanelDebug {
+  BookingDebugPanelAdminRules? adminRules;
 
-  Debug({this.adminRules,});
+  BookingDebugPanelDebug({
+    this.adminRules,
+  });
 
-  factory Debug.fromJson(Map<String, dynamic> json) {
-    return Debug(
-      adminRules: json['adminRules'] != null ? AdminRules.fromJson(json['adminRules']) : null,
+  factory BookingDebugPanelDebug.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelDebug(
+      adminRules: json['adminRules'] != null
+          ? BookingDebugPanelAdminRules.fromJson(json['adminRules'])
+          : null,
     );
   }
 }
 
-class AdminRules {
-  Dictionaries? dictionaries;
-  List<RuleSet>? rulesets;
+class BookingDebugPanelAdminRules {
+  List<BookingDebugPanelRuleSet>? rulesets;
 
-  AdminRules({
-    this.dictionaries,
+  BookingDebugPanelAdminRules({
     this.rulesets,
   });
 
-  factory AdminRules.fromJson(Map<String, dynamic> json) {
-    final List<RuleSet>? rulesets = (json['rulesets'] as List?)
+  factory BookingDebugPanelAdminRules.fromJson(Map<String, dynamic> json) {
+    final List<BookingDebugPanelRuleSet>? rulesets = (json['rulesets'] as List?)
         ?.map(
-          (e) => RuleSet.fromJson(e),
-        ).toList();
-    return AdminRules(
-      dictionaries: json['dictionaries'] != null ? Dictionaries.fromJson(json['dictionaries']) : null,
-      rulesets: rulesets,
-    );
+          (e) => BookingDebugPanelRuleSet.fromJson(e),
+        )
+        .toList();
+    return BookingDebugPanelAdminRules(rulesets: rulesets);
   }
 }
 
-class DebugPanelResponse {
-  Debug? debug;
+class BookingDebugPanelResponse {
+  BookingDebugPanelDebug? debug;
 
-  DebugPanelResponse({
+  BookingDebugPanelResponse({
     this.debug,
   });
 
-  factory DebugPanelResponse.fromJson(Map<String, dynamic> json) {
-    return DebugPanelResponse(
-      debug: json['debug'] != null ? Debug.fromJson(json['debug']) : null,
+  factory BookingDebugPanelResponse.fromJson(Map<String, dynamic> json) {
+    return BookingDebugPanelResponse(
+      debug: json['debug'] != null ? BookingDebugPanelDebug.fromJson(json['debug']) : null,
     );
   }
 }

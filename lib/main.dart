@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:debug_panel_sample/common_debug_panel_widget.dart';
+import 'package:debug_panel_sample/common_debug_panel/common_debug_panel_widget.dart';
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:debug_panel_sample/debug_panel_view.dart';
-import 'package:debug_panel_sample/scrollable_debug_panel_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 void main() {
@@ -23,8 +23,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: const DebugPanelPage(),
       home: CommonDebugPanelWidget(
+        decoration: CommonDebugPanelWidgetDecorationImpl(),
+        label: CommonDebugPanelWidgetLabel(
+          buttonLabel: 'Debug Panel',
+        ),
         child: Container(
           color: Colors.white,
           child: const Center(
@@ -42,8 +45,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class DebugPanelPage extends StatelessWidget {
-  const DebugPanelPage({super.key});
+class DebugPanelWebPage extends StatelessWidget {
+  const DebugPanelWebPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +57,59 @@ class DebugPanelPage extends StatelessWidget {
           'Debug Panel Demo Page',
         ),
       ),
-      body: DebugPanelView(
+      body: DebugPanelDetailsView(
         response: DebugPanelResponse.fromJson(jsonDecode(dataJson)),
+        decoration: BookingDebugPanelRuleSetViewDecorationImpl(),
+        label: BookingDebugPanelRuleSetViewLabel(
+          statusLabel: 'APPLIED',
+          rulesSetContentViewLabel: BookingDebugPanelRulesSetContentViewLabel(
+            rulesOverviewText: 'Rules Overview',
+            overviewWidgetLabel: BookingDebugPanelOverviewWidgetLabel(
+              conditionViewLabel: BookingDebugPanelConditionViewLabel(
+                actionLabel: 'ACTION',
+                variableLabel: 'Variable',
+                valueLabel: 'Value',
+                replaceLabel: 'Replace',
+                withLabel: 'With',
+                contentsLabel: 'Contents',
+                positionLabel: 'Position',
+                propertyLabel: 'Property',
+                componentsConfiguration: 'Components Configuration',
+                noActionLabel: 'NO ACTION',
+                noConditionLabel: 'IF NO',
+                yesConditionLabel: 'IF YES',
+                conditionLabel: 'CONDITION',
+              ),
+            ),
+            executedRulesText: 'Executed Rules',
+            outputActionsText: 'Output Actions',
+            undefined: 'Undefined',
+          ),
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+class DebugPanelButtonDecorationImpl implements DebugPanelButtonDecoration {
+  @override
+  Color? get backgroundColor => const Color(0xFFF0F3F5);
+
+  @override
+  Color? get textColor => const Color(0xFF1F4074);
+
+  @override
+  Widget get image => SvgPicture.asset(
+        'assets/bug.svg',
+        fit: BoxFit.scaleDown,
+      );
+}
+
+class CommonDebugPanelWidgetDecorationImpl
+    implements CommonDebugPanelWidgetDecoration {
+  @override
+  DebugPanelButtonDecoration get buttonDecoration =>
+      DebugPanelButtonDecorationImpl();
 }
 
 const dataJson = '''

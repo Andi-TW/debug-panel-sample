@@ -1,20 +1,23 @@
 import 'dart:convert';
 
-import 'package:debug_panel_sample/debug_panel_modal_ctrl.dart';
+import 'package:debug_panel_sample/common_debug_panel/debug_panel_modal_ctrl.dart';
 import 'package:debug_panel_sample/debug_panel_models.dart';
+import 'package:debug_panel_sample/debug_panel_view.dart';
 import 'package:debug_panel_sample/helpers/bottom_sheets.dart';
 import 'package:debug_panel_sample/main.dart';
-import 'package:debug_panel_sample/scrollable_debug_panel_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class CommonDebugPanelWidget extends StatefulWidget {
   final Widget child;
+  final CommonDebugPanelWidgetDecoration decoration;
+  final CommonDebugPanelWidgetLabel label;
 
   const CommonDebugPanelWidget({
     super.key,
     required this.child,
+    required this.decoration,
+    required this.label,
   });
 
   @override
@@ -31,15 +34,12 @@ class _CommonDebugPanelWidgetState extends State<CommonDebugPanelWidget> {
           Positioned(
             bottom: 22.0,
             left: 18.0,
-            child: _DebugPanelButton(
+            child: DebugPanelButton(
               onPressed: () async {
                 await _showContributionPicker();
               },
-              image: SvgPicture.asset(
-                'assets/bug.svg',
-                fit: BoxFit.scaleDown,
-              ),
-              text: 'Debug Panel',
+              label: widget.label.buttonLabel,
+              decoration: widget.decoration.buttonDecoration,
             ),
           )
         ],
@@ -57,8 +57,16 @@ class _CommonDebugPanelWidgetState extends State<CommonDebugPanelWidget> {
             backgroundColor: const Color(0xFFF0F3F5),
             isExpanded: false,
             maxHeight: controller.isExpanded.value ? null : controller.minHeight,
-            content: MainPage(
+            content: BookingDebugPanelPage(
               response: DebugPanelResponse.fromJson(jsonDecode(dataJson)),
+              decoration: BookingDebugPanelPageDecorationImpl(),
+              label: BookingDebugPanelPageLabel(
+                titleLabel: 'Debug Information',
+                showLocalisationLabel: 'Show localisation key',
+                hideHistoryLabel: 'Hide Ruleset History',
+                executionHistoryLabel: 'Ruleset Execution History',
+                searchLabel: 'Search',
+              ),
               onTapRulesButton: () {
                 controller.switchExpanded();
               },
@@ -81,15 +89,16 @@ class _CommonDebugPanelWidgetState extends State<CommonDebugPanelWidget> {
   }
 }
 
-class _DebugPanelButton extends StatelessWidget {
+class DebugPanelButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final Widget image;
-  final String text;
+  final String label;
+  final DebugPanelButtonDecoration decoration;
 
-  const _DebugPanelButton({
+  const DebugPanelButton({
+    super.key, 
     required this.onPressed,
-    required this.image,
-    required this.text,
+    required this.label,
+    required this.decoration,
   });
 
   @override
@@ -97,10 +106,9 @@ class _DebugPanelButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFF0F3F5),
-        foregroundColor: Colors.black,
-        side: const BorderSide(
-          color: Color(0xFF1F4074),
+        backgroundColor: decoration.backgroundColor,
+        side: BorderSide(
+          color: decoration.textColor ?? Colors.grey,
           width: 1,
         ),
         shape: RoundedRectangleBorder(
@@ -114,18 +122,46 @@ class _DebugPanelButton extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          image,
+          decoration.image,
           const SizedBox(width: 8),
           Text(
-            text,
-            style: const TextStyle(
+            label,
+            style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 16.0,
-              color: Color(0xFF1F4074),
+              color: decoration.textColor,
             ),
           ),
         ],
       ),
     );
   }
+}
+
+class DebugPanelButtonDecoration {
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Widget image;
+
+  DebugPanelButtonDecoration({
+    required this.backgroundColor, 
+    required this.textColor,
+    required this.image,
+  });
+}
+
+class CommonDebugPanelWidgetDecoration {
+  final DebugPanelButtonDecoration buttonDecoration;
+
+  CommonDebugPanelWidgetDecoration({
+    required this.buttonDecoration,
+  });
+}
+
+class CommonDebugPanelWidgetLabel {
+  final String buttonLabel;
+
+  CommonDebugPanelWidgetLabel({
+    required this.buttonLabel,
+  });
 }

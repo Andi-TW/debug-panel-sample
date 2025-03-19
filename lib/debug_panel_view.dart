@@ -1,194 +1,9 @@
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:flutter/material.dart';
 
-class DebugPanelDetailsView extends StatelessWidget {
-  final BookingDebugPanelResponse response;
-  final BookingDebugPanelDictionaries dictionaries;
-  final BookingDebugPanelRuleSetViewLabel label;
-  final BookingDebugPanelRuleSetViewDecoration decoration;
-
-  const DebugPanelDetailsView({
-    super.key,
-    required this.response,
-    required this.dictionaries,
-    required this.label,
-    required this.decoration,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: dictionaries.rulesets?.entries.map(
-                (e) {
-                  return BookingDebugPanelRuleSetView(
-                    initialExpanded: true,
-                    rulesetId: e.key,
-                    ruleSet: e.value,
-                    label: label,
-                    decoration: decoration,
-                    operatorText: (operatorCode) =>
-                        dictionaries.operators?[operatorCode ?? ''] ?? '',
-                    ruleSetDetails: (rulesetId) =>
-                        response.debug?.adminRules?.rulesets?.firstWhere(
-                      (element) => element.rulesetId == rulesetId,
-                    ),
-                  );
-                },
-              ).toList() ??
-              [],
-        ),
-      ),
-    );
-  }
-}
-
-class BookingDebugPanelRuleSetView extends StatefulWidget {
-  final bool initialExpanded;
-  final String rulesetId;
-  final BookingDebugPanelRulesetsTemp ruleSet;
-  final BookingDebugPanelRuleSetViewLabel label;
-  final BookingDebugPanelRuleSetViewDecoration decoration;
-  final String Function(String? operatorCode) operatorText;
-  final BookingDebugPanelRuleSet? Function(String? rulesetId) ruleSetDetails;
-
-  const BookingDebugPanelRuleSetView({
-    super.key,
-    required this.initialExpanded,
-    required this.rulesetId,
-    required this.ruleSet,
-    required this.label,
-    required this.decoration,
-    required this.operatorText,
-    required this.ruleSetDetails,
-  });
-
-  @override
-  State<BookingDebugPanelRuleSetView> createState() => _BookingDebugPanelRuleSetViewState();
-}
-
-class _BookingDebugPanelRuleSetViewState
-    extends State<BookingDebugPanelRuleSetView> {
-  bool isExpanded = false;
-
-  @override
-  void initState() {
-    isExpanded = widget.initialExpanded;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(
-            color: const Color(0xFFE1E7EA),
-            width: 1.0,
-          )),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 16.0,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() => isExpanded = !isExpanded);
-            },
-            child: Row(
-              children: [
-                Expanded(
-                    child: Text(
-                  widget.ruleSet.name ?? '',
-                  style: widget.decoration.titleStyle,
-                )),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      border: Border.all(
-                        color: widget.decoration.positiveStatusColor ?? Colors.grey,
-                        width: 1.0,
-                      )),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: 10,
-                  ),
-                  child: Text(
-                    'APPLIED',
-                    style: widget.decoration.positiveStatusStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (isExpanded)
-            BookingDebugPanelRulesSetContentView(
-              ruleSet: widget.ruleSet,
-              rulesetId: widget.rulesetId,
-              label: widget.label.rulesSetContentViewLabel,
-              decoration: BookingDebugPanelRulesSetContentViewDecorationImpl(),
-              operatorText: widget.operatorText,
-              ruleSetDetails: widget.ruleSetDetails,
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class BookingDebugPanelRuleSetViewLabel {
-  final String statusLabel;
-  final BookingDebugPanelRulesSetContentViewLabel rulesSetContentViewLabel;
-
-  BookingDebugPanelRuleSetViewLabel({
-    required this.statusLabel,
-    required this.rulesSetContentViewLabel,
-  });
-}
-
-class BookingDebugPanelRuleSetViewDecoration {
-  final TextStyle titleStyle;
-  final TextStyle positiveStatusStyle;
-  final Color? positiveStatusColor;
-
-  BookingDebugPanelRuleSetViewDecoration({
-    required this.titleStyle,
-    required this.positiveStatusStyle,
-    required this.positiveStatusColor,
-  });
-}
-
-class BookingDebugPanelRuleSetViewDecorationImpl
-    implements BookingDebugPanelRuleSetViewDecoration {
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 12.0,
-        color: Color(0xFF333333),
-      );
-
-  @override
-  TextStyle get positiveStatusStyle => const TextStyle(
-        color: Color(0xFF1DB36E),
-        fontWeight: FontWeight.w700,
-        fontSize: 10.0,
-      );
-
-  @override
-  Color? get positiveStatusColor => const Color(0xFF1DB36E);
-}
-
 class BookingDebugPanelRulesSetContentView extends StatelessWidget {
-  final BookingDebugPanelRulesetsTemp ruleSet;
   final String rulesetId;
+  final BookingDebugPanelRulesetsTemp ruleSet;
   final BookingDebugPanelRulesSetContentViewLabel label;
   final BookingDebugPanelRulesSetContentViewDecoration decoration;
   final String Function(String? operatorCode) operatorText;
@@ -196,8 +11,8 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
 
   const BookingDebugPanelRulesSetContentView({
     super.key,
-    required this.ruleSet,
     required this.rulesetId,
+    required this.ruleSet,
     required this.label,
     required this.decoration,
     required this.operatorText,
@@ -208,9 +23,9 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.rulesOverviewText,
-          decoration: DebugPanelSectionDecorationImpl(),
+          decoration: decoration.sectionDecoration,
           child: Column(
             children: ruleSet.rules?.entries
                     .map(
@@ -218,24 +33,8 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: BookingDebugPanelOverviewWidget(
                           rules: rule.value,
-                          decoration: BookingDebugPanelOverviewWidgetDecorationImpl(),
-                          label: BookingDebugPanelOverviewWidgetLabel(
-                            conditionViewLabel: BookingDebugPanelConditionViewLabel(
-                              actionLabel: 'ACTION',
-                              variableLabel: 'Variable',
-                              valueLabel: 'Value',
-                              replaceLabel: 'Replace',
-                              withLabel: 'With',
-                              contentsLabel: 'Contents',
-                              positionLabel: 'Position',
-                              propertyLabel: 'Property',
-                              componentsConfiguration: 'Components Configuration',
-                              noActionLabel: 'NO ACTION',
-                              noConditionLabel: 'IF NO',
-                              yesConditionLabel: 'IF YES',
-                              conditionLabel: 'CONDITION',
-                            ),
-                          ),
+                          decoration: decoration.overviewWidgetDecoration,
+                          label: label.overviewWidgetLabel,
                           operatorText: operatorText,
                         ),
                       ),
@@ -244,8 +43,8 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
                 [],
           ),
         ),
-        DebugPanelSection(
-          decoration: DebugPanelSectionDecorationImpl(),
+        BookingDebugPanelSection(
+          decoration: decoration.sectionDecoration,
           title: 'Input snapshot',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -271,9 +70,9 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
             ],
           ),
         ),
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.outputActionsText,
-          decoration: DebugPanelSectionDecorationImpl(),
+          decoration: decoration.sectionDecoration,
           child: Column(
             children: [
               _verticalPropertyLabel(
@@ -286,9 +85,9 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
             ],
           ),
         ),
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.outputActionsText,
-          decoration: DebugPanelSectionDecorationImpl(),
+          decoration: decoration.sectionDecoration,
           child: Column(
             children: [
               _propertyWithCaptionLabel(
@@ -314,9 +113,9 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
             ],
           ),
         ),
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.outputActionsText,
-          decoration: DebugPanelSectionDecorationImpl(),
+          decoration: decoration.sectionDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: ruleSet.rules?.entries.map(
@@ -329,15 +128,15 @@ class BookingDebugPanelRulesSetContentView extends StatelessWidget {
                         );
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: ExecutedRulesView(
+                      child: BookingDebugPanelExecutedRulesView(
                         rule: newRules,
-                        label: ExecutedRulesViewLabel(
+                        label: BookingDebugPanelExecutedRulesViewLabel(
                           title: rules.value.name ?? '',
                           executedRulesText: label.executedRulesText,
                           outputActionsText: label.outputActionsText,
                           undefined: label.undefined,
                         ),
-                        decoration: ExecutedRulesViewDecorationImpl(),
+                        decoration: decoration.executedRulesViewDecoration,
                       ),
                     );
                   },
@@ -496,47 +295,30 @@ class BookingDebugPanelRulesSetContentViewDecoration {
   final TextStyle captionLabelStyle;
   final TextStyle tagLabelStyle;
   final TextStyle valueLabelStyle;
+  final BookingDebugPanelOverviewWidgetDecoration overviewWidgetDecoration;
+  final BookingDebugPanelSectionDecoration sectionDecoration;
+  final BookingDebugPanelExecutedRulesViewDecoration executedRulesViewDecoration;
 
   BookingDebugPanelRulesSetContentViewDecoration({
     required this.captionLabelStyle,
     required this.tagLabelStyle,
     required this.valueLabelStyle,
+    required this.overviewWidgetDecoration,
+    required this.sectionDecoration,
+    required this.executedRulesViewDecoration,
   });
 }
 
-class BookingDebugPanelRulesSetContentViewDecorationImpl implements BookingDebugPanelRulesSetContentViewDecoration {
-  @override
-  TextStyle get captionLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Colors.black,
-      );
-
-  @override
-  TextStyle get tagLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF0066B3),
-      );
-
-  @override
-  TextStyle get valueLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF1DB36E),
-      );
-}
-
-class DebugPanelSection extends StatelessWidget {
+class BookingDebugPanelSection extends StatelessWidget {
   final String title;
+  final BookingDebugPanelSectionDecoration decoration;
   final Widget child;
-  final DebugPanelSectionDecoration decoration;
 
-  const DebugPanelSection({
+  const BookingDebugPanelSection({
     super.key,
     required this.title,
-    required this.child,
     required this.decoration,
+    required this.child,
   });
 
   @override
@@ -586,54 +368,24 @@ class DebugPanelSection extends StatelessWidget {
   }
 }
 
-class DebugPanelSectionDecoration {
+class BookingDebugPanelSectionDecoration {
   final TextStyle titleStyle;
   final Color? bgColor;
   final Color? titleBgColor;
 
-  DebugPanelSectionDecoration({
+  BookingDebugPanelSectionDecoration({
     required this.titleStyle,
     required this.bgColor,
     required this.titleBgColor,
   });
 }
 
-class DebugPanelSectionDecorationImpl implements DebugPanelSectionDecoration {
-  @override
-  Color? get bgColor => const Color(0xFFFFFFFF);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 12.0,
-                color: Colors.black,
-              );
-  
-  @override
-  Color? get titleBgColor => const Color(0xFFE1E7EA);
-}
-
-class SubDebugPanelSectionDecorationImpl implements DebugPanelSectionDecoration {
-  @override
-  Color? get bgColor => const Color(0xFFFFFFFF);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 12.0,
-                color: Colors.black,
-              );
-  
-  @override
-  Color? get titleBgColor => const Color(0xFFFCF5E6);
-}
-
-class PillContentView extends StatelessWidget {
+class BookingDebugPanelPillContentView extends StatelessWidget {
   final String title;
   final Widget content;
-  final PillContentViewDecoration decoration;
+  final BookingDebugPanelPillContentViewDecoration decoration;
 
-  const PillContentView({
+  const BookingDebugPanelPillContentView({
     super.key,
     required this.title,
     required this.content,
@@ -710,46 +462,16 @@ class PillContentView extends StatelessWidget {
   }
 }
 
-class PillContentViewDecoration {
+class BookingDebugPanelPillContentViewDecoration {
   final Color color;
   final TextStyle titleStyle;
   final Color? bgColor;
 
-  PillContentViewDecoration({
+  BookingDebugPanelPillContentViewDecoration({
     required this.color,
     required this.titleStyle,
     required this.bgColor,
   });
-}
-
-class ConditionPillContentViewDecorationImpl implements PillContentViewDecoration {
-  @override
-  Color get color => const Color(0xFFE6A935);
-  
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        color: Color(0xFFE6A935),
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-      );
-                    
-  @override
-  Color? get bgColor => Colors.white;
-}
-
-class ActionPillContentViewDecorationImpl implements PillContentViewDecoration {
-  @override
-  Color get color => const Color(0xFF0066B3);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        color: Color(0xFF0066B3),
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-      );
-
-  @override
-  Color? get bgColor => Colors.white;
 }
 
 class BookingDebugPanelOverviewWidget extends StatelessWidget {
@@ -796,7 +518,7 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
         success: overview.success,
         failed: overview.failed,
         operatorText: operatorText,
-        decoration: BookingDebugPanelConditionViewDecorationImpl(),
+        decoration: decoration.conditionViewDecoration,
         label: label.conditionViewLabel,
       );
     } else if (overview.type == 'action') {
@@ -922,7 +644,9 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
     );
 
     return BookingDebugPanelActionView(
-      label: '${label.conditionViewLabel.actionLabel}: ${action.actionType ?? ''}',
+      label:
+          '${label.conditionViewLabel.actionLabel}: ${action.actionType ?? ''}',
+      decoration: decoration.actionPillContentViewDecoration,
       children: children,
     );
   }
@@ -941,41 +665,15 @@ class BookingDebugPanelOverviewWidgetDecoration {
   final TextStyle titleStyle;
   final TextStyle tagStyle;
   final TextStyle valueStyle;
+  final BookingDebugPanelPillContentViewDecoration actionPillContentViewDecoration;
 
   BookingDebugPanelOverviewWidgetDecoration({
     required this.conditionViewDecoration,
     required this.titleStyle,
     required this.tagStyle,
     required this.valueStyle,
+    required this.actionPillContentViewDecoration,
   });
-}
-
-class BookingDebugPanelOverviewWidgetDecorationImpl
-    implements BookingDebugPanelOverviewWidgetDecoration {
-  @override
-  BookingDebugPanelConditionViewDecoration get conditionViewDecoration =>
-      BookingDebugPanelConditionViewDecorationImpl();
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 12.0,
-        color: Color(0xFF333333),
-      );
-
-  @override
-  TextStyle get tagStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 10,
-        color: Color(0xFFA7B6BF),
-      );
-
-  @override
-  TextStyle get valueStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 10,
-        color: Color(0xFF333333),
-      );
 }
 
 class BookingDebugPanelConditionView extends StatelessWidget {
@@ -1002,9 +700,9 @@ class BookingDebugPanelConditionView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
         children: [
-          PillContentView(
+          BookingDebugPanelPillContentView(
             title: label.conditionLabel,
-            decoration: ConditionPillContentViewDecorationImpl(),
+            decoration: decoration.conditionPillContentViewDecoration,
             content: Column(
               children: _generateConditionViews(
                 conditions: conditions,
@@ -1014,9 +712,9 @@ class BookingDebugPanelConditionView extends StatelessWidget {
             ),
           ),
           success != null || failed != null
-              ? ConditionResultView(
+              ? BookingDebugPanelConditionResultView(
                   title: label.yesConditionLabel,
-                  decoration: GreenConditionResultViewDecorationImpl(),
+                  decoration: decoration.positiveConditionResultViewDecoration,
                   initialExpanded: true,
                   children: success
                           ?.map(
@@ -1024,17 +722,17 @@ class BookingDebugPanelConditionView extends StatelessWidget {
                           )
                           .toList() ??
                       [
-                        EmptyActionView(
+                        BookingDebugPanelEmptyActionView(
                           label: label.noActionLabel,
-                          decoration: EmptyActionViewDecorationImpl(),
+                          decoration: decoration.emptyActionViewDecoration,
                         )
                       ],
                 )
               : const SizedBox(),
           success != null || failed != null
-              ? ConditionResultView(
+              ? BookingDebugPanelConditionResultView(
                   title: label.noConditionLabel,
-                  decoration: RedConditionResultViewDecorationImpl(),
+                  decoration: decoration.negativeConditionResultViewDecoration,
                   initialExpanded: false,
                   children: failed
                           ?.map(
@@ -1042,9 +740,9 @@ class BookingDebugPanelConditionView extends StatelessWidget {
                           )
                           .toList() ??
                       [
-                        EmptyActionView(
+                        BookingDebugPanelEmptyActionView(
                           label: label.noActionLabel,
-                          decoration: EmptyActionViewDecorationImpl(),
+                          decoration: decoration.emptyActionViewDecoration,
                         )
                       ],
                 )
@@ -1061,7 +759,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
         success: element.success,
         failed: element.failed,
         operatorText: operatorText,
-        decoration: BookingDebugPanelConditionViewDecorationImpl(),
+        decoration: decoration,
         label: label,
       );
     } else if (element.type == 'action') {
@@ -1181,6 +879,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
 
     return BookingDebugPanelActionView(
       label: '${label.actionLabel}: ${action.actionType ?? ''}',
+      decoration: decoration.actionPillContentViewDecoration,
       children: children,
     );
   }
@@ -1234,7 +933,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
         bottom: 8.0,
         right: 8.0,
       ),
-      child: ConditionCompareView(
+      child: BookingDebugPanelConditionCompareView(
         label: conditionOperator,
         labelStyle: decoration.conditionCompareLabelStyle,
         child: Container(
@@ -1260,7 +959,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ConditionCompareView(
+      child: BookingDebugPanelConditionCompareView(
         label: condition.conditionOperator ?? '',
         labelStyle: decoration.conditionCompareLabelStyle,
         child: Column(
@@ -1271,8 +970,7 @@ class BookingDebugPanelConditionView extends StatelessWidget {
             BookingDebugPanelConditionCompareDetailsView(
               operand: condition.operand,
               operatorText: operatorText,
-              decoration:
-                  BookingDebugPanelConditionCompareDetailsViewDecorationImpl(),
+              decoration: decoration.conditionCompareDetailsViewDecoration,
             ),
             const SizedBox(
               height: 4.0,
@@ -1320,44 +1018,32 @@ class BookingDebugPanelConditionViewDecoration {
   final TextStyle conditionCompareLabelStyle;
   final TextStyle tagStyle;
   final TextStyle valueStyle;
+  final BookingDebugPanelPillContentViewDecoration conditionPillContentViewDecoration;
+  final BookingDebugPanelConditionResultViewDecoration positiveConditionResultViewDecoration;
+  final BookingDebugPanelConditionResultViewDecoration negativeConditionResultViewDecoration;
+  final BookingDebugPanelPillContentViewDecoration actionPillContentViewDecoration;
+  final BookingDebugPanelEmptyActionViewDecoration emptyActionViewDecoration;
+  final BookingDebugPanelConditionCompareDetailsViewDecoration conditionCompareDetailsViewDecoration;
 
   BookingDebugPanelConditionViewDecoration({
     required this.conditionCompareLabelStyle,
     required this.tagStyle,
     required this.valueStyle,
+    required this.conditionPillContentViewDecoration,
+    required this.positiveConditionResultViewDecoration,
+    required this.negativeConditionResultViewDecoration,
+    required this.actionPillContentViewDecoration,
+    required this.emptyActionViewDecoration,
+    required this.conditionCompareDetailsViewDecoration,
   });
 }
 
-class BookingDebugPanelConditionViewDecorationImpl
-    implements BookingDebugPanelConditionViewDecoration {
-  @override
-  TextStyle get conditionCompareLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 12.0,
-        color: Color(0xFFE6A935),
-      );
-
-  @override
-  TextStyle get tagStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 10,
-        color: Color(0xFFA7B6BF),
-      );
-
-  @override
-  TextStyle get valueStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 10,
-        color: Color(0xFF333333),
-      );
-}
-
-class ConditionCompareView extends StatelessWidget {
+class BookingDebugPanelConditionCompareView extends StatelessWidget {
   final String? label;
   final TextStyle labelStyle;
   final Widget child;
 
-  const ConditionCompareView({
+  const BookingDebugPanelConditionCompareView({
     super.key,
     required this.label,
     required this.labelStyle,
@@ -1414,9 +1100,7 @@ class BookingDebugPanelConditionCompareDetailsView extends StatelessWidget {
             children: [
               BookingDebugPanelTagLabel(
                 label: operand?.lhs?.tag ?? '',
-                decoration: BookingDebugPanelTagLabelDecorationImpl(
-                  backgroundColor: decoration.lhsTagColor,
-                ),
+                decoration: decoration.lhsTagLabelDecoration,
               ),
               Text(
                 operand?.lhs?.value ?? '',
@@ -1438,9 +1122,7 @@ class BookingDebugPanelConditionCompareDetailsView extends StatelessWidget {
             children: [
               BookingDebugPanelTagLabel(
                 label: operand?.rhs?.tag ?? '',
-                decoration: BookingDebugPanelTagLabelDecorationImpl(
-                  backgroundColor: decoration.rhsTagColor,
-                ),
+                decoration: decoration.rhsTagLabelDecoration,
               ),
               Expanded(
                 child: Text(
@@ -1459,38 +1141,15 @@ class BookingDebugPanelConditionCompareDetailsView extends StatelessWidget {
 class BookingDebugPanelConditionCompareDetailsViewDecoration {
   final TextStyle descriptionTextStyle;
   final TextStyle operatorTextStyle;
-  final Color? lhsTagColor;
-  final Color? rhsTagColor;
+  final BookingDebugPanelTagLabelDecoration lhsTagLabelDecoration;
+  final BookingDebugPanelTagLabelDecoration rhsTagLabelDecoration;
 
   BookingDebugPanelConditionCompareDetailsViewDecoration({
     required this.descriptionTextStyle,
     required this.operatorTextStyle,
-    required this.lhsTagColor,
-    required this.rhsTagColor,
+    required this.lhsTagLabelDecoration,
+    required this.rhsTagLabelDecoration,
   });
-}
-
-class BookingDebugPanelConditionCompareDetailsViewDecorationImpl
-    implements BookingDebugPanelConditionCompareDetailsViewDecoration {
-  @override
-  TextStyle get descriptionTextStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 10,
-        color: Color(0xFF333333),
-      );
-
-  @override
-  TextStyle get operatorTextStyle => const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 10,
-        color: Color(0xFFD1223E),
-      );
-
-  @override
-  Color? get lhsTagColor => const Color(0xFFA7B6BF);
-
-  @override
-  Color? get rhsTagColor => const Color(0xFF1DB36E);
 }
 
 class BookingDebugPanelTagLabel extends StatelessWidget {
@@ -1533,40 +1192,25 @@ class BookingDebugPanelTagLabelDecoration {
   });
 }
 
-class BookingDebugPanelTagLabelDecorationImpl
-    implements BookingDebugPanelTagLabelDecoration {
-  final Color? backgroundColor;
-
-  BookingDebugPanelTagLabelDecorationImpl({required this.backgroundColor});
-
-  @override
-  Color? get bgColor => backgroundColor;
-
-  @override
-  TextStyle get labelStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 10,
-        color: Colors.white,
-      );
-}
-
 class BookingDebugPanelActionView extends StatelessWidget {
   final String label;
   final List<Widget> children;
+  final BookingDebugPanelPillContentViewDecoration decoration;
 
   const BookingDebugPanelActionView({
     super.key,
     required this.label,
     required this.children,
+    required this.decoration,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: PillContentView(
+      child: BookingDebugPanelPillContentView(
         title: label,
-        decoration: ActionPillContentViewDecorationImpl(),
+        decoration: decoration,
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -1577,13 +1221,13 @@ class BookingDebugPanelActionView extends StatelessWidget {
   }
 }
 
-class ConditionResultView extends StatefulWidget {
+class BookingDebugPanelConditionResultView extends StatefulWidget {
   final String title;
-  final ConditionResultViewDecoration decoration;
+  final BookingDebugPanelConditionResultViewDecoration decoration;
   final List<Widget> children;
   final bool initialExpanded;
 
-  const ConditionResultView({
+  const BookingDebugPanelConditionResultView({
     super.key,
     required this.title,
     required this.decoration,
@@ -1592,10 +1236,10 @@ class ConditionResultView extends StatefulWidget {
   });
 
   @override
-  State<ConditionResultView> createState() => _ConditionResultViewState();
+  State<BookingDebugPanelConditionResultView> createState() => _BookingDebugPanelConditionResultViewState();
 }
 
-class _ConditionResultViewState extends State<ConditionResultView> {
+class _BookingDebugPanelConditionResultViewState extends State<BookingDebugPanelConditionResultView> {
   bool isExpanded = false;
 
   @override
@@ -1660,13 +1304,13 @@ class _ConditionResultViewState extends State<ConditionResultView> {
   }
 }
 
-class ConditionResultViewDecoration {
+class BookingDebugPanelConditionResultViewDecoration {
   final Color? bgColor;
   final Color? color;
   final TextStyle titleStyle;
   final TextStyle expandButtonStyle;
 
-  ConditionResultViewDecoration({
+  BookingDebugPanelConditionResultViewDecoration({
     required this.bgColor,
     required this.color,
     required this.titleStyle,
@@ -1674,56 +1318,12 @@ class ConditionResultViewDecoration {
   });
 }
 
-class RedConditionResultViewDecorationImpl
-    implements ConditionResultViewDecoration {
-  @override
-  Color? get bgColor => const Color(0xFFFCEDF0);
-
-  @override
-  TextStyle get expandButtonStyle => const TextStyle(
-        color: Colors.white,
-        fontSize: 8.0,
-      );
-
-  @override
-  Color? get color => const Color(0xFFD1223E);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 10.0,
-        color: Color(0xFFD1223E),
-      );
-}
-
-class GreenConditionResultViewDecorationImpl
-    implements ConditionResultViewDecoration {
-  @override
-  Color? get bgColor => const Color(0xFFEAF8F8);
-
-  @override
-  TextStyle get expandButtonStyle => const TextStyle(
-        color: Colors.white,
-        fontSize: 8.0,
-      );
-
-  @override
-  Color? get color => const Color(0xFF00AFAD);
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 10.0,
-        color: Color(0xFF00AFAD),
-      );
-}
-
-class ExecutedRulesView extends StatelessWidget {
+class BookingDebugPanelExecutedRulesView extends StatelessWidget {
   final BookingDebugPanelRule? rule;
-  final ExecutedRulesViewLabel label;
-  final ExecutedRulesViewDecoration decoration;
+  final BookingDebugPanelExecutedRulesViewLabel label;
+  final BookingDebugPanelExecutedRulesViewDecoration decoration;
 
-  const ExecutedRulesView({
+  const BookingDebugPanelExecutedRulesView({
     super.key,
     required this.rule,
     required this.label,
@@ -1739,9 +1339,9 @@ class ExecutedRulesView extends StatelessWidget {
           label.title,
           style: decoration.titleStyle,
         ),
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.executedRulesText,
-          decoration: SubDebugPanelSectionDecorationImpl(),
+          decoration: decoration.subSectionDecoration,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: rule?.variables?.map(
@@ -1755,9 +1355,9 @@ class ExecutedRulesView extends StatelessWidget {
                 [],
           ),
         ),
-        DebugPanelSection(
+        BookingDebugPanelSection(
           title: label.outputActionsText,
-          decoration: SubDebugPanelSectionDecorationImpl(),
+          decoration: decoration.subSectionDecoration,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: _generatePropertiesText(rule),
@@ -1954,13 +1554,13 @@ class ExecutedRulesView extends StatelessWidget {
   }
 }
 
-class ExecutedRulesViewLabel {
+class BookingDebugPanelExecutedRulesViewLabel {
   final String title;
   final String executedRulesText;
   final String outputActionsText;
   final String undefined;
 
-  ExecutedRulesViewLabel({
+  BookingDebugPanelExecutedRulesViewLabel({
     required this.title,
     required this.executedRulesText,
     required this.outputActionsText,
@@ -1968,55 +1568,27 @@ class ExecutedRulesViewLabel {
   });
 }
 
-class ExecutedRulesViewDecoration {
+class BookingDebugPanelExecutedRulesViewDecoration {
   final TextStyle captionLabelStyle;
   final TextStyle tagLabelStyle;
   final TextStyle valueLabelStyle;
   final TextStyle titleStyle;
+  final BookingDebugPanelSectionDecoration subSectionDecoration;
 
-  ExecutedRulesViewDecoration({
+  BookingDebugPanelExecutedRulesViewDecoration({
     required this.captionLabelStyle,
     required this.tagLabelStyle,
     required this.valueLabelStyle,
     required this.titleStyle,
+    required this.subSectionDecoration,
   });
 }
 
-class ExecutedRulesViewDecorationImpl implements ExecutedRulesViewDecoration {
-  @override
-  TextStyle get captionLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Colors.black,
-      );
-
-  @override
-  TextStyle get tagLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF0066B3),
-      );
-
-  @override
-  TextStyle get valueLabelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF1DB36E),
-      );
-
-  @override
-  TextStyle get titleStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12.0,
-        color: Color(0xFF1F4074),
-      );
-}
-
-class EmptyActionView extends StatelessWidget {
+class BookingDebugPanelEmptyActionView extends StatelessWidget {
   final String label;
-  final EmptyActionViewDecoration decoration;
+  final BookingDebugPanelEmptyActionViewDecoration decoration;
 
-  const EmptyActionView({
+  const BookingDebugPanelEmptyActionView({
     super.key,
     required this.label,
     required this.decoration,
@@ -2046,38 +1618,23 @@ class EmptyActionView extends StatelessWidget {
   }
 }
 
-class EmptyActionViewDecoration {
+class BookingDebugPanelEmptyActionViewDecoration {
   final Color? borderColor;
   final Color? bgColor;
   final TextStyle labelStyle;
 
-  EmptyActionViewDecoration({
+  BookingDebugPanelEmptyActionViewDecoration({
     required this.borderColor,
     required this.bgColor,
     required this.labelStyle,
   });
 }
 
-class EmptyActionViewDecorationImpl implements EmptyActionViewDecoration {
-  @override
-  Color? get bgColor => const Color(0xFFFAFBFC);
-
-  @override
-  Color? get borderColor => const Color(0xFFCED8DD);
-
-  @override
-  TextStyle get labelStyle => const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 12.0,
-        color: Color(0xFFCED8DD),
-      );
-}
-
-class DebugInformationDetailsView extends StatelessWidget {
+class BookingDebugPanelInformationDetailsView extends StatelessWidget {
   final List<String> details;
-  final DebugInformationDetailsViewDecoration decoration;
+  final BookingDebugPanelInformationDetailsViewDecoration decoration;
 
-  const DebugInformationDetailsView({
+  const BookingDebugPanelInformationDetailsView({
     super.key,
     required this.details,
     required this.decoration,
@@ -2117,27 +1674,14 @@ class DebugInformationDetailsView extends StatelessWidget {
   }
 }
 
-class DebugInformationDetailsViewDecoration {
+class BookingDebugPanelInformationDetailsViewDecoration {
   final Color? dotColor;
   final TextStyle labelStyle;
 
-  DebugInformationDetailsViewDecoration({
+  BookingDebugPanelInformationDetailsViewDecoration({
     required this.dotColor,
     required this.labelStyle,
   });
-}
-
-class DebugInformationDetailsViewDecorationImpl
-    implements DebugInformationDetailsViewDecoration {
-  @override
-  Color? get dotColor => const Color(0xFF333333);
-
-  @override
-  TextStyle get labelStyle => const TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 12,
-        color: Color(0xFF333333),
-      );
 }
 
 class CheckboxView extends StatefulWidget {
@@ -2196,12 +1740,12 @@ class CheckboxViewDecoration {
   });
 }
 
-class DebugPanelExpandablePanel extends StatefulWidget {
+class BookingDebugPanelExpandablePanel extends StatefulWidget {
   final Widget content;
-  final DebugPanelExpandablePanelLabel label;
-  final DebugPanelExpandablePanelDecoration decoration;
+  final BookingDebugPanelExpandablePanelLabel label;
+  final BookingDebugPanelExpandablePanelDecoration decoration;
 
-  const DebugPanelExpandablePanel({
+  const BookingDebugPanelExpandablePanel({
     super.key,
     required this.content,
     required this.label,
@@ -2209,10 +1753,10 @@ class DebugPanelExpandablePanel extends StatefulWidget {
   });
 
   @override
-  State<DebugPanelExpandablePanel> createState() => _DebugPanelExpandablePanelState();
+  State<BookingDebugPanelExpandablePanel> createState() => _BookingDebugPanelExpandablePanelState();
 }
 
-class _DebugPanelExpandablePanelState extends State<DebugPanelExpandablePanel>
+class _BookingDebugPanelExpandablePanelState extends State<BookingDebugPanelExpandablePanel>
     with SingleTickerProviderStateMixin {
   bool isExpanded = false;
   late AnimationController _controller;
@@ -2289,11 +1833,7 @@ class _DebugPanelExpandablePanelState extends State<DebugPanelExpandablePanel>
                     ),
                     child: Text(
                       widget.label.status,
-                      style: TextStyle(
-                        color: widget.decoration.positiveStatusColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 10.0,
-                      ),
+                      style: widget.decoration.positiveStatusLabelStyle,
                     ),
                   ),
                 ],
@@ -2314,49 +1854,53 @@ class _DebugPanelExpandablePanelState extends State<DebugPanelExpandablePanel>
   }
 }
 
-class DebugPanelExpandablePanelLabel {
+class BookingDebugPanelExpandablePanelLabel {
   final String title;
   final String status;
 
-  DebugPanelExpandablePanelLabel({
+  BookingDebugPanelExpandablePanelLabel({
     required this.title,
     required this.status,
   });
 }
 
-class DebugPanelExpandablePanelDecoration {
+class BookingDebugPanelExpandablePanelDecoration {
   final Color? positiveStatusColor;
   final TextStyle titleStyle;
+  final TextStyle positiveStatusLabelStyle;
 
-  DebugPanelExpandablePanelDecoration({
+  BookingDebugPanelExpandablePanelDecoration({
     required this.positiveStatusColor,
     required this.titleStyle,
+    required this.positiveStatusLabelStyle,
   });
 }
 
-class HorizontalScrollableContent extends StatefulWidget {
-  final BookingDebugPanelRulesetsTemp ruleSet;
+class BookingDebugPanelScrollableContent extends StatefulWidget {
   final String rulesetId;
-  final Color? thumbColor;
+  final BookingDebugPanelRulesetsTemp ruleSet;
+  final BookingDebugPanelScrollableContentLabel label;
+  final BookingDebugPanelScrollableContentDecoration decoration;
   final String Function(String? operatorCode) operatorText;
   final BookingDebugPanelRuleSet? Function(String? rulesetId) ruleSetDetails;
 
-  const HorizontalScrollableContent({
+  const BookingDebugPanelScrollableContent({
     super.key, 
     required this.ruleSet,
     required this.rulesetId,
-    this.thumbColor,
+    required this.label,
+    required this.decoration,
     required this.operatorText,
     required this.ruleSetDetails,
   });
 
   @override
-  State<HorizontalScrollableContent> createState() =>
-      _HorizontalScrollableContentState();
+  State<BookingDebugPanelScrollableContent> createState() =>
+      _BookingDebugPanelScrollableContentState();
 }
 
-class _HorizontalScrollableContentState
-    extends State<HorizontalScrollableContent> {
+class _BookingDebugPanelScrollableContentState
+    extends State<BookingDebugPanelScrollableContent> {
   late ScrollController _scrollController;
   double _thumbPosition = 0.0;
 
@@ -2404,30 +1948,8 @@ class _HorizontalScrollableContentState
             child: BookingDebugPanelRulesSetContentView(
               ruleSet: widget.ruleSet,
               rulesetId: widget.rulesetId,
-              label: BookingDebugPanelRulesSetContentViewLabel(
-                rulesOverviewText: 'Rules Overview',
-                overviewWidgetLabel: BookingDebugPanelOverviewWidgetLabel(
-                  conditionViewLabel: BookingDebugPanelConditionViewLabel(
-                    actionLabel: 'ACTION',
-                    variableLabel: 'Variable',
-                    valueLabel: 'Value',
-                    replaceLabel: 'Replace',
-                    withLabel: 'With',
-                    contentsLabel: 'Contents',
-                    positionLabel: 'Position',
-                    propertyLabel: 'Property',
-                    componentsConfiguration: 'Components Configuration',
-                    noActionLabel: 'NO ACTION',
-                    noConditionLabel: 'IF NO',
-                    yesConditionLabel: 'IF YES',
-                    conditionLabel: 'CONDITION',
-                  ),
-                ),
-                executedRulesText: 'Executed Rules',
-                outputActionsText: 'Output Actions',
-                undefined: 'Undefined',
-              ),
-              decoration: BookingDebugPanelRulesSetContentViewDecorationImpl(),
+              label: widget.label.rulesSetContentViewLabel,
+              decoration: widget.decoration.rulesSetContentViewDecoration,
               operatorText: widget.operatorText,
               ruleSetDetails: widget.ruleSetDetails,
             ),
@@ -2457,7 +1979,7 @@ class _HorizontalScrollableContentState
                       width: thumbWidth.clamp(30, visibleWidth),
                       height: scrollbarThickness,
                       decoration: BoxDecoration(
-                        color: widget.thumbColor ?? Colors.grey,
+                        color: widget.decoration.thumbColor ?? Colors.grey,
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -2470,6 +1992,24 @@ class _HorizontalScrollableContentState
       ],
     );
   }
+}
+
+class BookingDebugPanelScrollableContentLabel {
+  final BookingDebugPanelRulesSetContentViewLabel rulesSetContentViewLabel;
+
+  BookingDebugPanelScrollableContentLabel({
+    required this.rulesSetContentViewLabel,
+  });
+}
+
+class BookingDebugPanelScrollableContentDecoration {
+  final Color? thumbColor;
+  final BookingDebugPanelRulesSetContentViewDecoration rulesSetContentViewDecoration;
+
+  BookingDebugPanelScrollableContentDecoration({
+    required this.thumbColor,
+    required this.rulesSetContentViewDecoration,
+  });
 }
 
 class StickyHeaderDelegate extends SliverPersistentHeaderDelegate {

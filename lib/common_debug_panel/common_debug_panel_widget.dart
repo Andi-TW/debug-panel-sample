@@ -96,15 +96,28 @@ class _CommonDebugPanelWidgetState extends State<CommonDebugPanelWidget> {
   }
 }
 
+class BookingDebugPanelInformationDetailsViewDecorationImpl
+    implements BookingDebugPanelInformationDetailsViewDecoration {
+  @override
+  Color? get dotColor => const Color(0xFF333333);
+
+  @override
+  TextStyle get labelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12,
+        color: Color(0xFF333333),
+      );
+}
+
 class BookingDebugPanelPageDecorationImpl
     implements BookingDebugPanelPageDecoration {
   @override
   Color? get backgroundColor => const Color(0xFFF0F3F5);
 
   @override
-  DebugInformationDetailsViewDecoration
+  BookingDebugPanelInformationDetailsViewDecoration
       get debugInformationDetailsViewDecoration =>
-          DebugInformationDetailsViewDecorationImpl();
+          BookingDebugPanelInformationDetailsViewDecorationImpl();
 
   @override
   CheckboxViewDecoration get checkboxViewDecoration =>
@@ -176,7 +189,7 @@ class CheckboxViewDecorationImpl implements CheckboxViewDecoration {
 }
 
 class DebugPanelExpandablePanelDecorationImpl
-    implements DebugPanelExpandablePanelDecoration {
+    implements BookingDebugPanelExpandablePanelDecoration {
   @override
   Color? get positiveStatusColor => const Color(0xFF1DB36E);
 
@@ -185,6 +198,13 @@ class DebugPanelExpandablePanelDecorationImpl
         fontWeight: FontWeight.w600,
         fontSize: 12.0,
         color: Color(0xFF333333),
+      );
+
+  @override
+  TextStyle get positiveStatusLabelStyle => const TextStyle(
+        color: Color(0xFF1DB36E),
+        fontWeight: FontWeight.w700,
+        fontSize: 10.0,
       );
 }
 

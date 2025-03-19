@@ -1,5 +1,6 @@
 import 'package:debug_panel_sample/debug_panel_models.dart';
 import 'package:debug_panel_sample/debug_panel_view.dart';
+import 'package:debug_panel_sample/main.dart';
 import 'package:flutter/material.dart';
 
 class BookingDebugPanelPage extends StatelessWidget {
@@ -59,7 +60,7 @@ class BookingDebugPanelPage extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DebugInformationDetailsView(
+                child: BookingDebugPanelInformationDetailsView(
                   decoration: decoration.debugInformationDetailsViewDecoration,
                   details: [
                     '${label.appVersionLabel}: 0.0.0',
@@ -174,16 +175,41 @@ class BookingDebugPanelPage extends StatelessWidget {
                   return ruleset != null
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: DebugPanelExpandablePanel(
-                            label: DebugPanelExpandablePanelLabel(
+                          child: BookingDebugPanelExpandablePanel(
+                            label: BookingDebugPanelExpandablePanelLabel(
                               title: ruleset.name ?? '',
                               status: label.positiveStatusLabel,
                             ),
                             decoration: decoration.expandablePanelDecoration,
-                            content: HorizontalScrollableContent(
+                            content: BookingDebugPanelScrollableContent(
                               ruleSet: ruleset,
                               rulesetId: key ?? '',
-                              thumbColor: decoration.thumbColor,
+                              label: BookingDebugPanelScrollableContentLabel(
+                                rulesSetContentViewLabel: BookingDebugPanelRulesSetContentViewLabel(
+                                  rulesOverviewText: 'Rules Overview',
+                                  overviewWidgetLabel: BookingDebugPanelOverviewWidgetLabel(
+                                    conditionViewLabel: BookingDebugPanelConditionViewLabel(
+                                      actionLabel: 'ACTION',
+                                      variableLabel: 'Variable',
+                                      valueLabel: 'Value',
+                                      replaceLabel: 'Replace',
+                                      withLabel: 'With',
+                                      contentsLabel: 'Contents',
+                                      positionLabel: 'Position',
+                                      propertyLabel: 'Property',
+                                      componentsConfiguration: 'Components Configuration',
+                                      noActionLabel: 'NO ACTION',
+                                      noConditionLabel: 'IF NO',
+                                      yesConditionLabel: 'IF YES',
+                                      conditionLabel: 'CONDITION',
+                                    ),
+                                  ),
+                                  executedRulesText: 'Executed Rules',
+                                  outputActionsText: 'Output Actions',
+                                  undefined: 'Undefined',
+                                ),
+                              ),
+                              decoration: BookingDebugPanelScrollableContentDecorationImpl(),
                               operatorText: (operatorCode) {
                                 return dictionaries.operators?[operatorCode ?? ''] ?? '';
                               },
@@ -241,9 +267,9 @@ class BookingDebugPanelPageDecoration {
   final Widget searchIcon;
   final Widget titleIcon;
   final Widget closeIcon;
-  final DebugInformationDetailsViewDecoration debugInformationDetailsViewDecoration;
+  final BookingDebugPanelInformationDetailsViewDecoration debugInformationDetailsViewDecoration;
   final CheckboxViewDecoration checkboxViewDecoration;
-  final DebugPanelExpandablePanelDecoration expandablePanelDecoration;
+  final BookingDebugPanelExpandablePanelDecoration expandablePanelDecoration;
 
   BookingDebugPanelPageDecoration({
     required this.backgroundColor,

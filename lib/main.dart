@@ -45,53 +45,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class DebugPanelWebPage extends StatelessWidget {
-  const DebugPanelWebPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
-          'Debug Panel Demo Page',
-        ),
-      ),
-      body: DebugPanelDetailsView(
-        response: BookingDebugPanelResponse.fromJson(jsonDecode(dataJson)),
-        dictionaries: BookingDebugPanelDictionaries.fromJson(jsonDecode(dictionariesJson)),
-        decoration: BookingDebugPanelRuleSetViewDecorationImpl(),
-        label: BookingDebugPanelRuleSetViewLabel(
-          statusLabel: 'APPLIED',
-          rulesSetContentViewLabel: BookingDebugPanelRulesSetContentViewLabel(
-            rulesOverviewText: 'Rules Overview',
-            overviewWidgetLabel: BookingDebugPanelOverviewWidgetLabel(
-              conditionViewLabel: BookingDebugPanelConditionViewLabel(
-                actionLabel: 'ACTION',
-                variableLabel: 'Variable',
-                valueLabel: 'Value',
-                replaceLabel: 'Replace',
-                withLabel: 'With',
-                contentsLabel: 'Contents',
-                positionLabel: 'Position',
-                propertyLabel: 'Property',
-                componentsConfiguration: 'Components Configuration',
-                noActionLabel: 'NO ACTION',
-                noConditionLabel: 'IF NO',
-                yesConditionLabel: 'IF YES',
-                conditionLabel: 'CONDITION',
-              ),
-            ),
-            executedRulesText: 'Executed Rules',
-            outputActionsText: 'Output Actions',
-            undefined: 'Undefined',
-          ),
-        ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
 class DebugPanelButtonDecorationImpl implements DebugPanelButtonDecoration {
   @override
   Color? get backgroundColor => const Color(0xFFF0F3F5);
@@ -111,6 +64,330 @@ class CommonDebugPanelWidgetDecorationImpl
   @override
   DebugPanelButtonDecoration get buttonDecoration =>
       DebugPanelButtonDecorationImpl();
+}
+
+class BookingDebugPanelRulesSetContentViewDecorationImpl implements BookingDebugPanelRulesSetContentViewDecoration {
+  @override
+  TextStyle get captionLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Colors.black,
+      );
+
+  @override
+  TextStyle get tagLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Color(0xFF0066B3),
+      );
+
+  @override
+  TextStyle get valueLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Color(0xFF1DB36E),
+      );
+
+  @override
+  BookingDebugPanelOverviewWidgetDecoration get overviewWidgetDecoration =>
+      BookingDebugPanelOverviewWidgetDecorationImpl();
+
+  @override
+  BookingDebugPanelSectionDecoration get sectionDecoration =>
+      BookingDebugPanelSectionDecorationImpl();
+  
+  @override
+  BookingDebugPanelExecutedRulesViewDecoration get executedRulesViewDecoration =>
+      BookingDebugPanelExecutedRulesViewDecorationImpl();
+}
+
+class BookingDebugPanelSectionDecorationImpl implements BookingDebugPanelSectionDecoration {
+  @override
+  Color? get bgColor => const Color(0xFFFFFFFF);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Colors.black,
+      );
+
+  @override
+  Color? get titleBgColor => const Color(0xFFE1E7EA);
+}
+
+class SubBookingDebugPanelSectionDecorationImpl
+    implements BookingDebugPanelSectionDecoration {
+  @override
+  Color? get bgColor => const Color(0xFFFFFFFF);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Colors.black,
+      );
+
+  @override
+  Color? get titleBgColor => const Color(0xFFFCF5E6);
+}
+
+class BookingDebugPanelConditionPillContentViewDecorationImpl
+    implements BookingDebugPanelPillContentViewDecoration {
+  @override
+  Color get color => const Color(0xFFE6A935);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        color: Color(0xFFE6A935),
+        fontWeight: FontWeight.w700,
+        fontSize: 12,
+      );
+
+  @override
+  Color? get bgColor => Colors.white;
+}
+
+class ActionBookingDebugPanelPillContentViewDecorationImpl implements BookingDebugPanelPillContentViewDecoration {
+  @override
+  Color get color => const Color(0xFF0066B3);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        color: Color(0xFF0066B3),
+        fontWeight: FontWeight.w700,
+        fontSize: 12,
+      );
+
+  @override
+  Color? get bgColor => Colors.white;
+}
+
+class BookingDebugPanelOverviewWidgetDecorationImpl
+    implements BookingDebugPanelOverviewWidgetDecoration {
+  @override
+  BookingDebugPanelConditionViewDecoration get conditionViewDecoration =>
+      BookingDebugPanelConditionViewDecorationImpl();
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 12.0,
+        color: Color(0xFF333333),
+      );
+
+  @override
+  TextStyle get tagStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 10,
+        color: Color(0xFFA7B6BF),
+      );
+
+  @override
+  TextStyle get valueStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 10,
+        color: Color(0xFF333333),
+      );
+
+  @override
+  BookingDebugPanelPillContentViewDecoration get actionPillContentViewDecoration =>
+      ActionBookingDebugPanelPillContentViewDecorationImpl();
+}
+
+class BookingDebugPanelConditionViewDecorationImpl
+    implements BookingDebugPanelConditionViewDecoration {
+  @override
+  TextStyle get conditionCompareLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 12.0,
+        color: Color(0xFFE6A935),
+      );
+
+  @override
+  TextStyle get tagStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 10,
+        color: Color(0xFFA7B6BF),
+      );
+
+  @override
+  TextStyle get valueStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 10,
+        color: Color(0xFF333333),
+      );
+
+  @override
+  BookingDebugPanelPillContentViewDecoration get conditionPillContentViewDecoration =>
+      BookingDebugPanelConditionPillContentViewDecorationImpl();
+
+  @override
+  BookingDebugPanelConditionResultViewDecoration get positiveConditionResultViewDecoration =>
+      GreenBookingDebugPanelConditionResultViewDecorationImpl();
+
+  @override
+  BookingDebugPanelConditionResultViewDecoration get negativeConditionResultViewDecoration => RedBookingDebugPanelConditionResultViewDecorationImpl();
+
+  @override
+  BookingDebugPanelPillContentViewDecoration get actionPillContentViewDecoration =>
+      ActionBookingDebugPanelPillContentViewDecorationImpl();
+
+  @override
+  BookingDebugPanelEmptyActionViewDecoration get emptyActionViewDecoration =>
+      BookingDebugPanelEmptyActionViewDecorationImpl();
+
+  @override
+  BookingDebugPanelConditionCompareDetailsViewDecoration
+      get conditionCompareDetailsViewDecoration =>
+          BookingDebugPanelConditionCompareDetailsViewDecorationImpl();
+}
+
+class BookingDebugPanelExecutedRulesViewDecorationImpl implements BookingDebugPanelExecutedRulesViewDecoration {
+  @override
+  TextStyle get captionLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Colors.black,
+      );
+
+  @override
+  TextStyle get tagLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Color(0xFF0066B3),
+      );
+
+  @override
+  TextStyle get valueLabelStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Color(0xFF1DB36E),
+      );
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12.0,
+        color: Color(0xFF1F4074),
+      );
+
+  @override
+  BookingDebugPanelSectionDecoration get subSectionDecoration => SubBookingDebugPanelSectionDecorationImpl();
+}
+
+class BookingDebugPanelScrollableContentDecorationImpl
+    implements BookingDebugPanelScrollableContentDecoration {
+  @override
+  Color? get thumbColor => const Color(0xFF0D4689);
+
+  @override
+  BookingDebugPanelRulesSetContentViewDecoration
+      get rulesSetContentViewDecoration =>
+          BookingDebugPanelRulesSetContentViewDecorationImpl();
+}
+
+class BookingDebugPanelEmptyActionViewDecorationImpl implements BookingDebugPanelEmptyActionViewDecoration {
+  @override
+  Color? get bgColor => const Color(0xFFFAFBFC);
+
+  @override
+  Color? get borderColor => const Color(0xFFCED8DD);
+
+  @override
+  TextStyle get labelStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 12.0,
+        color: Color(0xFFCED8DD),
+      );
+}
+
+class GreenBookingDebugPanelConditionResultViewDecorationImpl
+    implements BookingDebugPanelConditionResultViewDecoration {
+  @override
+  Color? get bgColor => const Color(0xFFEAF8F8);
+
+  @override
+  TextStyle get expandButtonStyle => const TextStyle(
+        color: Colors.white,
+        fontSize: 8.0,
+      );
+
+  @override
+  Color? get color => const Color(0xFF00AFAD);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 10.0,
+        color: Color(0xFF00AFAD),
+      );
+}
+
+class RedBookingDebugPanelConditionResultViewDecorationImpl
+    implements BookingDebugPanelConditionResultViewDecoration {
+  @override
+  Color? get bgColor => const Color(0xFFFCEDF0);
+
+  @override
+  TextStyle get expandButtonStyle => const TextStyle(
+        color: Colors.white,
+        fontSize: 8.0,
+      );
+
+  @override
+  Color? get color => const Color(0xFFD1223E);
+
+  @override
+  TextStyle get titleStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 10.0,
+        color: Color(0xFFD1223E),
+      );
+}
+
+class BookingDebugPanelTagLabelDecorationImpl
+    implements BookingDebugPanelTagLabelDecoration {
+  final Color? backgroundColor;
+
+  BookingDebugPanelTagLabelDecorationImpl({required this.backgroundColor});
+
+  @override
+  Color? get bgColor => backgroundColor;
+
+  @override
+  TextStyle get labelStyle => const TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 10,
+        color: Colors.white,
+      );
+}
+
+class BookingDebugPanelConditionCompareDetailsViewDecorationImpl
+    implements BookingDebugPanelConditionCompareDetailsViewDecoration {
+  @override
+  TextStyle get descriptionTextStyle => const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 10,
+        color: Color(0xFF333333),
+      );
+
+  @override
+  TextStyle get operatorTextStyle => const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 10,
+        color: Color(0xFFD1223E),
+      );
+
+  @override
+  BookingDebugPanelTagLabelDecoration get lhsTagLabelDecoration =>
+      BookingDebugPanelTagLabelDecorationImpl(
+          backgroundColor: const Color(0xFFA7B6BF));
+
+  @override
+  BookingDebugPanelTagLabelDecoration get rhsTagLabelDecoration =>
+      BookingDebugPanelTagLabelDecorationImpl(
+          backgroundColor: const Color(0xFF1DB36E));
 }
 
 const dictionariesJson = '''

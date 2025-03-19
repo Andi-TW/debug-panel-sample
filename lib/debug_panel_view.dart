@@ -560,111 +560,34 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
       );
     }
 
-    List<Widget> children = [];
-
-    //TODO change children assignment from forEach to use spread operator for more readability
-    ///example :
-    ///
-    /// List<Widget> children = [
-    //   // Mapping over `components`
-    //   ...?action.components?.expand((component) => [
-    //     propertyLabel(
-    //       label.conditionViewLabel.componentsConfiguration,
-    //       component.component ?? '',
-    //     ),
-    //     ...?component.properties?.map((property) => Row(
-    //       children: [
-    //         propertyLabel(
-    //           label.conditionViewLabel.propertyLabel,
-    //           property.property ?? '',
-    //         ),
-    //         const SizedBox(width: 8.0),
-    //         propertyLabel(
-    //           label.conditionViewLabel.valueLabel,
-    //           property.value ?? '',
-    //         ),
-    //       ],
-    //     )),
-    //   ]),
-    //
-    //   // Mapping over `placeholders`
-    //   ...?action.placeholders?.map((placeholder) => Row(
-    //     children: [
-    //       propertyLabel(
-    //         label.conditionViewLabel.positionLabel,
-    //         placeholder.position ?? '',
-    //       ),
-    //       const SizedBox(width: 8.0),
-    //       propertyLabel(
-    //         label.conditionViewLabel.contentsLabel,
-    //         placeholder.contents ?? '',
-    //       ),
-    //     ],
-    //   )),
-    //
-    //   // Mapping over `replacements`
-    //   ...?action.replacements?.map((replacement) => Row(
-    //     children: [
-    //       propertyLabel(
-    //         label.conditionViewLabel.replaceLabel,
-    //         replacement.replace ?? '',
-    //       ),
-    //       const SizedBox(width: 8.0),
-    //       propertyLabel(
-    //         label.conditionViewLabel.withLabel,
-    //         replacement.replaceWith ?? '',
-    //       ),
-    //     ],
-    //   )),
-    //
-    //   // Mapping over `variables`
-    //   ...?action.variables?.map((variable) => Row(
-    //     children: [
-    //       propertyLabel(
-    //         label.conditionViewLabel.variableLabel,
-    //         variable.variable ?? '',
-    //       ),
-    //       const SizedBox(width: 8.0),
-    //       propertyLabel(
-    //         label.conditionViewLabel.valueLabel,
-    //         variable.value ?? '',
-    //       ),
-    //     ],
-    //   )),
-    // ];
-
-
-    action.components?.forEach(
-      (component) {
-        children.add(
-          propertyLabel(
-            label.conditionViewLabel.componentsConfiguration,
-            component.component ?? '',
-          ),
-        );
-        component.properties?.forEach(
-          (property) {
-            children.add(Row(
-              children: [
-                propertyLabel(
-                  label.conditionViewLabel.propertyLabel,
-                  property.property ?? '',
-                ),
-                const SizedBox(width: 8.0),
-                propertyLabel(
-                  label.conditionViewLabel.valueLabel,
-                  property.value ?? '',
-                ),
-              ],
-            ));
-          },
-        );
-      },
-    );
-
-    action.placeholders?.forEach(
-      (placeholder) {
-        children.add(Row(
+    List<Widget> children = [
+      ...?action.components?.expand(
+        (component) {
+          return [
+            propertyLabel(
+              label.conditionViewLabel.componentsConfiguration,
+              component.component ?? '',
+            ),
+            ...?component.properties?.map(
+              (property) => Row(
+                children: [
+                  propertyLabel(
+                    label.conditionViewLabel.propertyLabel,
+                    property.property ?? '',
+                  ),
+                  const SizedBox(width: 8.0),
+                  propertyLabel(
+                    label.conditionViewLabel.valueLabel,
+                    property.value ?? '',
+                  ),
+                ],
+              ),
+            )
+          ];
+        },
+      ),
+      ...?action.placeholders?.map(
+        (placeholder) => Row(
           children: [
             propertyLabel(
               label.conditionViewLabel.positionLabel,
@@ -676,13 +599,10 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
               placeholder.contents ?? '',
             ),
           ],
-        ));
-      },
-    );
-
-    action.replacements?.forEach(
-      (replacement) {
-        children.add(Row(
+        ),
+      ),
+      ...?action.replacements?.map(
+        (replacement) => Row(
           children: [
             propertyLabel(
               label.conditionViewLabel.replaceLabel,
@@ -694,13 +614,10 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
               replacement.replaceWith ?? '',
             ),
           ],
-        ));
-      },
-    );
-
-    action.variables?.forEach(
-      (variable) {
-        children.add(Row(
+        ),
+      ),
+      ...?action.variables?.map(
+        (variable) => Row(
           children: [
             propertyLabel(
               label.conditionViewLabel.variableLabel,
@@ -712,13 +629,12 @@ class BookingDebugPanelOverviewWidget extends StatelessWidget {
               variable.value ?? '',
             ),
           ],
-        ));
-      },
-    );
+        ),
+      ),
+    ];
 
     return BookingDebugPanelActionView(
-      label:
-          '${label.conditionViewLabel.actionLabel}: ${action.actionType ?? ''}',
+      label: '${label.conditionViewLabel.actionLabel}: ${action.actionType ?? ''}',
       decoration: decoration.actionPillContentViewDecoration,
       children: children,
     );
@@ -865,21 +781,16 @@ class BookingDebugPanelConditionView extends StatelessWidget {
       );
     }
 
-    List<Widget> children = [];
-
-    //TODO if possible, use spread operator instead of forEach like example in TODO line 843
-    action.components?.forEach(
-      (component) {
-        children.add(
-          propertyLabel(
-            label.componentsConfiguration,
-            component.component ?? '',
-          ),
-        );
-        component.properties?.forEach(
-          (property) {
-            children.add(
-              Row(
+    List<Widget> children = [
+      ...?action.components?.expand(
+        (component) {
+          return [
+            propertyLabel(
+              label.componentsConfiguration,
+              component.component ?? '',
+            ),
+            ...?component.properties?.map(
+              (property) => Row(
                 children: [
                   propertyLabel(
                     label.propertyLabel,
@@ -892,15 +803,12 @@ class BookingDebugPanelConditionView extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        );
-      },
-    );
-
-    action.placeholders?.forEach(
-      (placeholder) {
-        children.add(Row(
+            ),
+          ];
+        },
+      ),
+      ...?action.placeholders?.map(
+        (placeholder) => Row(
           children: [
             propertyLabel(
               label.positionLabel,
@@ -912,13 +820,10 @@ class BookingDebugPanelConditionView extends StatelessWidget {
               placeholder.contents ?? '',
             ),
           ],
-        ));
-      },
-    );
-
-    action.replacements?.forEach(
-      (replacement) {
-        children.add(Row(
+        ),
+      ),
+      ...?action.replacements?.map(
+        (replacement) => Row(
           children: [
             propertyLabel(
               label.replaceLabel,
@@ -930,13 +835,10 @@ class BookingDebugPanelConditionView extends StatelessWidget {
               replacement.replaceWith ?? '',
             ),
           ],
-        ));
-      },
-    );
-
-    action.variables?.forEach(
-      (variable) {
-        children.add(Row(
+        ),
+      ),
+      ...?action.variables?.map(
+        (variable) => Row(
           children: [
             propertyLabel(
               label.variableLabel,
@@ -948,9 +850,9 @@ class BookingDebugPanelConditionView extends StatelessWidget {
               variable.value ?? '',
             ),
           ],
-        ));
-      },
-    );
+        ),
+      ),
+    ];
 
     return BookingDebugPanelActionView(
       label: '${label.actionLabel}: ${action.actionType ?? ''}',
@@ -1567,66 +1469,57 @@ class BookingDebugPanelExecutedRulesView extends StatelessWidget {
 
   List<Widget> _generatePropertiesText(BookingDebugPanelRule? rules) {
     if (rules == null) return [];
-    List<Widget> widgets = [];
-
-    //TODO if possible, use spread operator instead of forEach like example in TODO line 843
-    rules.actions?.forEach(
-      (action) {
-        action.components?.forEach(
-          (component) {
-            component.properties?.forEach(
-              (property) {
-                widgets.add(
-                  _generateCaptionWithTextView(
-                    caption:
-                        '${action.actionType ?? ''} ${component.component ?? ''}',
-                    child: _generateEqualPropertyText(
-                      tag: property.property ?? '',
-                      value: property.value ?? '',
+    List<Widget> widgets = [
+      ...?rules.actions?.expand(
+        (action) {
+          return [
+            ...?action.components?.expand(
+              (component) {
+                return [
+                  ...?component.properties?.map(
+                    (property) => _generateCaptionWithTextView(
+                      caption:
+                          '${action.actionType ?? ''} ${component.component ?? ''}',
+                      child: _generateEqualPropertyText(
+                        tag: property.property ?? '',
+                        value: property.value ?? '',
+                      ),
                     ),
                   ),
-                );
+                ];
               },
-            );
-          },
-        );
-
-        action.placeholders?.forEach(
-          (placeholder) {
-            widgets.add(_generateCaptionWithTextView(
+            ),
+            ...?action.placeholders?.map(
+              (placeholder) => _generateCaptionWithTextView(
                 caption: action.actionType ?? '',
                 child: _generateReplacedPropertyText(
                   from: placeholder.position ?? '',
                   to: placeholder.contents ?? '',
-                )));
-          },
-        );
-
-        action.replacements?.forEach(
-          (replacement) {
-            widgets.add(_generateCaptionWithTextView(
-              caption: action.actionType ?? '',
-              child: _generateReplacedPropertyText(
-                from: replacement.replace ?? '',
-                to: replacement.replaceWith ?? '',
+                ),
               ),
-            ));
-          },
-        );
-
-        action.variables?.forEach(
-          (variable) {
-            widgets.add(_generateCaptionWithTextView(
-              caption: action.actionType ?? '',
-              child: _generateEqualPropertyText(
-                tag: variable.variable ?? '',
-                value: variable.value ?? '',
+            ),
+            ...?action.replacements?.map(
+              (replacement) => _generateCaptionWithTextView(
+                caption: action.actionType ?? '',
+                child: _generateReplacedPropertyText(
+                  from: replacement.replace ?? '',
+                  to: replacement.replaceWith ?? '',
+                ),
               ),
-            ));
-          },
-        );
-      },
-    );
+            ),
+            ...?action.variables?.map(
+              (variable) => _generateCaptionWithTextView(
+                caption: action.actionType ?? '',
+                child: _generateEqualPropertyText(
+                  tag: variable.variable ?? '',
+                  value: variable.value ?? '',
+                ),
+              ),
+            ),
+          ];
+        },
+      ),
+    ];
     return widgets;
   }
 }
